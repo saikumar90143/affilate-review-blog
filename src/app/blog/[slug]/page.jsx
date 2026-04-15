@@ -10,6 +10,8 @@ import connectToDatabase from "@/lib/mongodb";
 import Post from "@/models/Post";
 import Product from "@/models/Product";
 import Settings from "@/models/Settings";
+import Blog from "@/models/Blog";
+import AIBlogPostLayout from "@/components/AIBlogPostLayout";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -28,7 +30,16 @@ export async function generateMetadata({ params }) {
   await connectToDatabase();
   const post = await Post.findOne({ slug }).select('metaTitle metaDescription title excerpt');
   
-  if (!post) return {};
+  if (!post) {
+    const blog = await Blog.findOne({ slug, status: 'published' });
+    if (blog) {
+      return {
+        title: blog.metaTitle || `${blog.title} | EliteReviews`,
+        description: blog.metaDescription || blog.summary,
+      };
+    }
+    return {};
+  }
 
   return {
     title: post.metaTitle || `${post.title} | EliteReviews`,
@@ -46,7 +57,16 @@ export default async function BlogPost({ params }) {
   ]);
   
   if (!post) {
-    return notFound();
+    const blog = await Blog.findOne({ slug, status: "published" }).lean();
+    if (!blog) return notFound();
+    
+    const relatedBlogs = await Blog.find({ _id: { $ne: blog._id }, status: "published" })
+      .sort({ createdAt: -1 })
+      .limit(3)
+      .lean();
+      
+    // Render the new AI layout
+    return <AIBlogPostLayout blog={blog} relatedPosts={relatedBlogs} />;
   }
 
   // Sanitize for Client Components

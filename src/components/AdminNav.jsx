@@ -2,16 +2,18 @@
 
 import { useState } from "react";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, FileText, ShoppingBag, Settings, FolderTree, Menu, X } from "lucide-react";
+import { LayoutDashboard, FileText, ShoppingBag, Settings, FolderTree, Menu, X, Bot } from "lucide-react";
 import Link from "next/link";
 import LogoutButton from "@/components/LogoutButton";
 
 const navLinks = [
-  { href: "/admin",            label: "Dashboard", icon: LayoutDashboard },
-  { href: "/admin/posts",      label: "Posts",      icon: FileText         },
-  { href: "/admin/products",   label: "Products",   icon: ShoppingBag      },
-  { href: "/admin/categories", label: "Categories", icon: FolderTree       },
-  { href: "/admin/settings",   label: "Settings",   icon: Settings         },
+  { href: "/admin",            label: "Dashboard",   icon: LayoutDashboard },
+  { href: "/admin/posts",      label: "Posts",       icon: FileText         },
+  { href: "/admin/blogs",      label: "AI Blogs",    icon: Bot              },
+  { href: "/admin/ai-generator", label: "AI Generator", icon: Bot             },
+  { href: "/admin/products",   label: "Products",    icon: ShoppingBag      },
+  { href: "/admin/categories", label: "Categories",  icon: FolderTree       },
+  { href: "/admin/settings",   label: "Settings",    icon: Settings         },
 ];
 
 export default function AdminNav({ email }) {
