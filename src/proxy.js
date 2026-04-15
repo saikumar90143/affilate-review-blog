@@ -1,0 +1,63 @@
+import { NextResponse } from 'next/server';
+import { getToken } from 'next-auth/jwt';
+
+export async function proxy(req) {
+  const path = req.nextUrl.pathname;
+  
+  // Protect all /admin routes
+  if (path.startsWith('/admin')) {
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET || "fallback_secret_for_local_dev_only" });
+    
+    if (!token) {
+      const url = new URL('/login', req.url);
+      url.searchParams.set('callbackUrl', encodeURI(req.url));
+      return NextResponse.redirect(url);
+    }
+  }
+
+  // Set Security Headers
+  const response = NextResponse.next();
+  
+  const cspHeader = `
+    default-src 'self';
+    script-src 'self' 'unsafe-eval' 'unsafe-inline';
+    style-src 'self' 'unsafe-inline';
+    img-src 'self' blob: data: https://dummyimage.com https://images.unsplash.com https://res.cloudinary.com;
+    font-src 'self';
+    object-src 'none';
+    base-uri 'self';
+    form-action 'self';
+    frame-ancestors 'none';
+    upgrade-insecure-requests;
+  `;
+
+  // Apply CSP Header
+  response.headers.set('Content-Security-Policy', cspHeader.replace(/\s{2,}/g, ' ').trim());
+  
+  // Protect against clickjacking
+  response.headers.set('X-Frame-Options', 'DENY');
+  
+  // Sniffing protection
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+  
+  // Strict Transport Security (HSTS)
+  response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+  
+  // Referrer Policy
+  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+
+  return response;
+}
+
+export const config = {
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+  ],
+};
