@@ -94,22 +94,38 @@ export default function AdminPosts() {
 
     setSaving(true);
 
-    const payload = { ...form, tags: (form.tags || "").split(",").map(t => t.trim()).filter(Boolean) };
-    const res = await fetch(isEdit ? `/api/posts/${editId}` : "/api/posts", {
-      method: isEdit ? "PUT" : "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    const data = await res.json();
-    setSaving(false);
+    try {
+      const payload = { ...form, tags: (form.tags || "").split(",").map(t => t.trim()).filter(Boolean) };
+      const res = await fetch(isEdit ? `/api/posts/${editId}` : "/api/posts", {
+        method: isEdit ? "PUT" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
-    if (!res.ok) {
-      setError(Array.isArray(data.error) ? data.error[0].message : data.error);
-      return;
+      // Handle non-JSON responses (like 500 HTML errors) gracefully
+      let data;
+      const contentType = res.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        data = await res.json();
+      } else {
+        const text = await res.text();
+        throw new Error(text.slice(0, 100) || "Server returned non-JSON response");
+      }
+
+      if (!res.ok) {
+        setError(Array.isArray(data.error) ? data.error[0].message : data.error);
+        return;
+      }
+
+      setSuccess(isEdit ? "Post updated!" : "Post created successfully!");
+      fetchAll();
+      setTimeout(() => { setDrawerOpen(false); setSuccess(null); }, 1500);
+    } catch (error) {
+      console.error("Submission error:", error);
+      setError(error.message || "Failed to save post. Please check connection.");
+    } finally {
+      setSaving(false);
     }
-    setSuccess(isEdit ? "Post updated!" : "Post created successfully!");
-    fetchAll();
-    setTimeout(() => { setDrawerOpen(false); setSuccess(null); }, 1500);
   };
 
   const handleDelete = async (id) => {
