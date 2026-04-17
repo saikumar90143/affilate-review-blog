@@ -18,7 +18,6 @@ const nextConfig: NextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === "production",
   },
-  serverExternalPackages: ["isomorphic-dompurify", "jsdom", "html-encoding-sniffer"],
 };
 
 export default nextConfig;

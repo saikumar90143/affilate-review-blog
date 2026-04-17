@@ -6,6 +6,7 @@ import { PostSchema } from "@/lib/validations";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
+import { sanitize } from "@/lib/sanitizer";
 
 export async function GET(req) {
   console.log("[GET /api/posts] Initiating request...");
@@ -60,9 +61,8 @@ export async function POST(req) {
     const validatedData = PostSchema.parse(body);
     console.log("[POST /api/posts] Validation passed");
 
-    // Temporarily disabling DOMPurify (which uses heavy JSDOM) to isolate Vercel 500 crash
-    // const DOMPurify = (await import('isomorphic-dompurify')).default;
-    // validatedData.content = DOMPurify.sanitize(validatedData.content);
+    // Sanitize HTML content
+    validatedData.content = sanitize(validatedData.content);
 
     await connectToDatabase();
     console.log("[POST /api/posts] Connected to DB. Saving...");

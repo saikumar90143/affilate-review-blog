@@ -5,7 +5,7 @@ import Category from "@/models/Category";
 import { PostSchema } from "@/lib/validations";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
-import DOMPurify from "isomorphic-dompurify";
+import { sanitize } from "@/lib/sanitizer";
 import { revalidatePath } from "next/cache";
 
 // GET single post by id
@@ -32,7 +32,7 @@ export async function PUT(req, { params }) {
     const { id } = await params;
     const body = await req.json();
     const validated = PostSchema.parse(body);
-    validated.content = DOMPurify.sanitize(validated.content);
+    validated.content = sanitize(validated.content);
 
     await connectToDatabase();
     const post = await Post.findByIdAndUpdate(id, validated, { new: true }).populate("category").lean();
