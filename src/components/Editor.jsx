@@ -35,6 +35,18 @@ export default function Editor({ value, onChange }) {
     return data.secure_url;
   };
 
+  const insertImage = async (editor, file) => {
+    const range = editor.getSelection(true);
+    try {
+      const url = await uploadToCloudinary(file);
+      editor.insertEmbed(range.index, "image", url);
+      editor.setSelection(range.index + 1);
+    } catch (err) {
+      console.error("Image upload failed:", err);
+      alert("Image upload failed. Please try again.");
+    }
+  };
+
   // Custom image handler for toolbar button
   const imageHandler = async () => {
     const input = document.createElement("input");
@@ -49,23 +61,14 @@ export default function Editor({ value, onChange }) {
       const editor = quillRef.current?.getEditor();
       if (!editor) return;
 
-      const range = editor.getSelection(true);
-
-      try {
-        const url = await uploadToCloudinary(file);
-        editor.insertEmbed(range.index, "image", url);
-        editor.setSelection(range.index + 1);
-      } catch (err) {
-        console.error("Editor image upload failed:", err);
-        alert("Image upload failed. Please try again.");
-      }
+      await insertImage(editor, file);
     };
   };
 
-  // Intercept pastes to prevent base64 images
+  // Intercept pastes and drops to prevent base64 images
   useEffect(() => {
     // Small delay to ensure quill is initialized
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       const editor = quillRef.current?.getEditor();
       if (!editor) return;
 
@@ -77,22 +80,30 @@ export default function Editor({ value, onChange }) {
           if (items[i].type.indexOf("image") !== -1) {
             const file = items[i].getAsFile();
             if (file) {
-              e.preventDefault(); // Stop default base64 paste
-              const range = editor.getSelection(true);
-              try {
-                const url = await uploadToCloudinary(file);
-                editor.insertEmbed(range.index, "image", url);
-                editor.setSelection(range.index + 1);
-              } catch (err) {
-                console.error("Pasted image upload failed:", err);
-              }
+              e.preventDefault();
+              await insertImage(editor, file);
             }
           }
         }
       };
 
+      const handleDrop = async (e) => {
+        const files = e.dataTransfer.files;
+        if (files && files.length > 0) {
+          const file = files[0];
+          if (file.type.indexOf("image") !== -1) {
+            e.preventDefault();
+            // Need to set selection to drop target if possible, or just current index
+            await insertImage(editor, file);
+          }
+        }
+      };
+
       editor.root.addEventListener("paste", handlePaste, true);
+      editor.root.addEventListener("drop", handleDrop, true);
     }, 500);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const modules = useMemo(() => ({

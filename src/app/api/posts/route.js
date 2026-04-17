@@ -44,24 +44,43 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
+  console.log("[POST /api/posts] Incoming request...");
   try {
     const session = await getServerSession(authOptions);
+    console.log("[POST /api/posts] Session found:", !!session, session?.user?.email);
+    
     if (!session || session.user.role !== 'admin') {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await req.json();
+    console.log("[POST /api/posts] Body received (slug):", body.slug);
     
     // Zod Validation securely parses incoming JSON
     const validatedData = PostSchema.parse(body);
+    console.log("[POST /api/posts] Validation passed");
 
-    // Deep XSS protection: Sanitizing rich text content before hitting database
-    // Dynamically require to avoid crashing GET load on some serverless environments
-    const DOMPurify = (await import('isomorphic-dompurify')).default;
-    validatedData.content = DOMPurify.sanitize(validatedData.content);
+    // Temporarily disabling DOMPurify (which uses heavy JSDOM) to isolate Vercel 500 crash
+    // const DOMPurify = (await import('isomorphic-dompurify')).default;
+    // validatedData.content = DOMPurify.sanitize(validatedData.content);
 
     await connectToDatabase();
-    const post = await Post.create(validatedData);
+    console.log("[POST /api/posts] Connected to DB. Saving...");
+
+    // Remove _id and __v if present in validatedData to prevent Mongoose errors or duplicates
+    const { _id, __v, createdAt, updatedAt, ...saveData } = validatedData;
+    
+    let post;
+    const { searchParams } = new URL(req.url); // Not used here but keep logic clean
+    const isEdit = _id ? true : false;
+
+    if (isEdit) {
+       post = await Post.findByIdAndUpdate(_id, saveData, { new: true }).lean();
+       console.log("[POST /api/posts] Updated post:", post?._id);
+    } else {
+       post = await Post.create(saveData);
+       console.log("[POST /api/posts] Created post:", post?._id);
+    }
     
     // Invalidate caches to show new post immediately
     revalidatePath("/");
@@ -69,6 +88,7 @@ export async function POST(req) {
     
     return NextResponse.json(post, { status: 201 });
   } catch (error) {
+    console.error('[POST /api/posts] CRITICAL ERROR:', error);
     if (error.name === 'ZodError') {
       const messages = error.errors.map(e => `${e.path.join('.')}: ${e.message}`);
       return NextResponse.json({ error: messages.join(' | ') }, { status: 400 });
@@ -76,7 +96,10 @@ export async function POST(req) {
     if (error.code === 11000) {
       return NextResponse.json({ error: "A post with this slug already exists." }, { status: 400 });
     }
-    console.error('[POST /api/posts] Error:', error);
-    return NextResponse.json({ error: "Failed to create post", details: error.message }, { status: 500 });
+    return NextResponse.json({ 
+      error: "Failed to create/update post", 
+      details: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined 
+    }, { status: 500 });
   }
 }
