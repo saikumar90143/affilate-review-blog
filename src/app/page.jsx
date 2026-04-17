@@ -185,7 +185,7 @@ export default async function Home() {
                  <Link 
                    key={cat._id.toString()} 
                    href={`/category/${cat.slug}`} 
-                   className="group relative overflow-hidden rounded-3xl md:rounded-[2.5rem] bg-[#0d0d12] border border-white/5 hover:border-primary-500/50 transition-all duration-500 reveal-up hover-lift aspect-[4/3] md:aspect-square flex flex-col justify-end"
+                   className="group relative overflow-hidden rounded-3xl md:rounded-[2.5rem] bg-[#0d0d12] border border-white/5 hover:border-primary-500/50 transition-all duration-500 reveal-up hover-lift aspect-square flex flex-col justify-end"
                    style={{ transitionDelay: `${idx * 100}ms` }}
                  >
                     {/* Background Detail */}
