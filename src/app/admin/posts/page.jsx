@@ -52,15 +52,28 @@ export default function AdminPosts() {
     setIsEdit(false); setEditId(null); setDrawerOpen(true);
   };
 
-  const openEdit = (post) => {
+  const openEdit = async (post) => {
+    setError(null); setSuccess(null);
+    setIsEdit(true); setEditId(post._id);
+    // Populate form with list data immediately so drawer opens fast
     setForm({
       ...post,
       category: post.category?._id || post.category,
       tags: (post.tags || []).join(", "),
-      isPublished: post.isPublished ?? true, // Default to true if field is missing from DB
+      isPublished: post.isPublished ?? true,
+      content: "", // placeholder while full post loads
     });
-    setError(null); setSuccess(null);
-    setIsEdit(true); setEditId(post._id); setDrawerOpen(true);
+    setDrawerOpen(true);
+    // Lazy-load full content (not included in list API to avoid OOM)
+    try {
+      const res = await fetch(`/api/posts/${post._id}`);
+      if (res.ok) {
+        const full = await res.json();
+        setForm(f => ({ ...f, content: full.content || "" }));
+      }
+    } catch (e) {
+      console.error("Failed to load full post content", e);
+    }
   };
 
   const closeDrawer = () => { setDrawerOpen(false); };

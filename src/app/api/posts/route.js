@@ -24,7 +24,7 @@ export async function GET(req) {
     if (search) filter.title = { $regex: search, $options: "i" };
 
     const [posts, total] = await Promise.all([
-      Post.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).populate("category", "name slug").lean(),
+      Post.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).populate("category", "name slug").select("-content").lean(),
       Post.countDocuments(filter),
     ]);
 

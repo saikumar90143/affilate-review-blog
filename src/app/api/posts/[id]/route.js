@@ -13,10 +13,11 @@ export async function GET(req, { params }) {
   try {
     const { id } = await params;
     await connectToDatabase();
-    const post = await Post.findById(id).populate("category", "name slug");
+    const post = await Post.findById(id).populate("category", "name slug").lean();
     if (!post) return NextResponse.json({ error: "Not found" }, { status: 404 });
     return NextResponse.json(post);
-  } catch {
+  } catch (error) {
+    console.error("GET /api/posts/[id] Error:", error);
     return NextResponse.json({ error: "Failed to fetch post" }, { status: 500 });
   }
 }
@@ -34,7 +35,7 @@ export async function PUT(req, { params }) {
     validated.content = DOMPurify.sanitize(validated.content);
 
     await connectToDatabase();
-    const post = await Post.findByIdAndUpdate(id, validated, { new: true }).populate("category");
+    const post = await Post.findByIdAndUpdate(id, validated, { new: true }).populate("category").lean();
     if (!post) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
     // Clear caches
