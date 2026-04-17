@@ -164,40 +164,85 @@
 .prose-elite {
   font-size: 1.125rem;
   line-height: 1.85;
-  color: #e2e8f0;
+  color: #cbd5e1;
+  max-width: 75ch; /* Optimal reading width */
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
 }
 @media (min-width: 1024px) {
   .prose-elite {
     font-size: 1.25rem; /* Larger font on desktop for lower eye fatigue */
   }
 }
-.prose-elite h2, .prose-elite h3 {
+.prose-elite h2, .prose-elite h3, .prose-elite h4 {
   color: #fff;
-  font-weight: 800;
+  font-weight: 900;
   letter-spacing: -0.025em;
   margin-top: 3.5rem;
   margin-bottom: 1.5rem;
   line-height: 1.3;
 }
 .prose-elite h2 {
-  font-size: 2rem;
+  font-size: 2.25rem;
 }
 .prose-elite h3 {
-  font-size: 1.5rem;
+  font-size: 1.75rem;
 }
 .prose-elite p {
-  margin-bottom: 2rem;
+  margin-bottom: 1.75rem;
+  font-weight: 300;
 }
 .prose-elite a {
   color: #60a5fa;
-  text-decoration: underline;
-  text-decoration-color: #3b82f680;
-  text-underline-offset: 4px;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(59, 130, 246, 0.3);
   transition: all 0.2s ease;
+  word-break: break-word;
 }
 .prose-elite a:hover {
   color: #93c5fd;
-  text-decoration-color: #60a5fa;
+  border-bottom-color: #60a5fa;
+}
+.prose-elite img {
+  border-radius: 1.5rem;
+  box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
+  margin: 3rem 0;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  max-width: 100%;
+  height: auto;
+}
+.prose-elite ul, .prose-elite ol {
+  margin-bottom: 2rem;
+  padding-left: 1.5rem;
+}
+.prose-elite li {
+  margin-bottom: 0.75rem;
+}
+.prose-elite blockquote {
+  border-left: 4px solid #3b82f6;
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.1) 0%, transparent 100%);
+  padding: 1.5rem 1.5rem 1.5rem 2rem;
+  margin: 3rem 0;
+  border-radius: 0 1rem 1rem 0;
+  font-style: italic;
+  font-weight: 300;
+}
+.prose-elite strong, .prose-elite b {
+  color: #fff;
+  font-weight: 700;
+}
+.prose-elite pre {
+  background: #0d0d14 !important;
+  border: 1px solid #1a1a24;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  overflow-x: auto;
+  margin: 2.5rem 0;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
 }
 
 /* ─── Elite Input / Form Polish ─────────────────────────── */

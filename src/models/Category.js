@@ -5,6 +5,11 @@ const CategorySchema = new Schema(
     name: { type: String, required: true },
     slug: { type: String, required: true, unique: true },
     description: { type: String },
+    for: { 
+      type: [String], 
+      enum: ['post', 'product'], 
+      default: ['post', 'product'] 
+    },
   },
   { timestamps: true }
 );

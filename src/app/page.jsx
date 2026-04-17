@@ -79,37 +79,37 @@ export default async function Home() {
               2026 Editorial Edition
             </div>
             
-            <h1 className="text-6xl md:text-8xl font-black tracking-tighter mb-8 leading-[0.9] lg:max-w-xl">
+            <h1 className="text-5xl sm:text-6xl md:text-8xl font-black tracking-tighter mb-8 leading-[1.1] md:leading-[0.9] lg:max-w-xl">
               Buy Less. <br />
               <span className="premium-gradient">Buy Better.</span>
             </h1>
             
-            <p className="text-xl text-gray-400 max-w-lg mx-auto lg:mx-0 mb-12 leading-relaxed font-light">
+            <p className="text-base sm:text-xl text-gray-400 max-w-lg mx-auto lg:mx-0 mb-10 md:mb-12 leading-relaxed font-light">
               We separate the high-performance gear from the hype. Technical analysis and real-world testing for the elite consumer.
             </p>
             
-            <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-5 mb-16">
-              <Link href="/blog" className="px-10 py-5 rounded-2xl bg-white text-black font-black transition-all hover:bg-gray-200 hover:scale-105 shadow-2xl flex items-center justify-center gap-3 group">
-                Access The Vault <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4 md:gap-5 mb-12 md:mb-16">
+              <Link href="/blog" className="px-6 py-4 md:px-10 md:py-5 rounded-2xl bg-white text-black text-sm md:text-base font-black transition-all hover:bg-gray-200 hover:scale-105 shadow-2xl flex items-center justify-center gap-3 group w-full sm:w-auto">
+                Access The Vault <ArrowRight className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
-              <Link href="/comparison" className="px-10 py-5 rounded-2xl glass-premium text-white font-bold transition-all hover:bg-white/10 flex items-center justify-center gap-3">
-                <BarChart3 className="w-5 h-5" /> Compare Gear
+              <Link href="/comparison" className="px-6 py-4 md:px-10 md:py-5 rounded-2xl glass-premium text-white text-sm md:text-base font-bold transition-all hover:bg-white/10 flex items-center justify-center gap-3 w-full sm:w-auto">
+                <BarChart3 className="w-4 h-4 md:w-5 md:h-5" /> Compare Gear
               </Link>
             </div>
 
             {/* Stats Bar with Details */}
-            <div className="grid grid-cols-3 gap-8 pt-10 border-t border-white/5 max-w-lg mx-auto lg:mx-0">
+            <div className="grid grid-cols-3 gap-6 md:gap-8 pt-8 md:pt-10 border-t border-white/5 max-w-lg mx-auto lg:mx-0">
                <div className="flex flex-col">
-                  <span className="text-3xl font-black text-white leading-none">{stats.posts}+</span>
-                  <span className="text-[10px] text-gray-500 font-bold uppercase mt-2 tracking-widest">Post Guides</span>
+                  <span className="text-2xl md:text-3xl font-black text-white leading-none">{stats.posts}+</span>
+                  <span className="text-[8px] md:text-[10px] text-gray-500 font-bold uppercase mt-2 tracking-widest">Post Guides</span>
                </div>
                <div className="flex flex-col">
-                  <span className="text-3xl font-black text-white leading-none">{stats.products}</span>
-                  <span className="text-[10px] text-gray-500 font-bold uppercase mt-2 tracking-widest">Lab Tests</span>
+                  <span className="text-2xl md:text-3xl font-black text-white leading-none">{stats.products}</span>
+                  <span className="text-[8px] md:text-[10px] text-gray-500 font-bold uppercase mt-2 tracking-widest">Lab Tests</span>
                </div>
                <div className="flex flex-col">
-                  <span className="text-3xl font-black text-white leading-none">99.9%</span>
-                  <span className="text-[10px] text-gray-500 font-bold uppercase mt-2 tracking-widest">Objectivity</span>
+                  <span className="text-2xl md:text-3xl font-black text-white leading-none">99.9%</span>
+                  <span className="text-[8px] md:text-[10px] text-gray-500 font-bold uppercase mt-2 tracking-widest">Objectivity</span>
                </div>
             </div>
           </div>
@@ -164,16 +164,16 @@ export default async function Home() {
       </div>
 
       {/* Bento Grid Category Section */}
-      <section className="py-32 px-4 relative">
+      <section className="py-20 md:py-32 px-4 relative">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-20 reveal-up">
-             <span className="text-primary-500 font-black uppercase text-xs tracking-[0.3em] mb-4 block">Categories</span>
-             <h2 className="text-5xl font-black tracking-tighter mb-4">Discovery Engine</h2>
-             <p className="text-gray-500 text-lg max-w-xl mx-auto font-light">Select your domain and find the highest-performing gear curated by experts.</p>
+          <div className="text-center mb-12 md:mb-20 reveal-up">
+             <span className="text-primary-500 font-black uppercase text-[10px] md:text-xs tracking-[0.3em] mb-3 md:mb-4 block">Categories</span>
+             <h2 className="text-3xl md:text-5xl font-black tracking-tighter mb-4">Discovery Engine</h2>
+             <p className="text-gray-500 text-sm md:text-lg max-w-xl mx-auto font-light leading-relaxed">Select your domain and find the highest-performing gear curated by experts.</p>
           </div>
 
           {/* Uniform Grid Layout */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {allCategories.map((cat, idx) => {
                let Icon = Cpu;
                if (cat.name.toLowerCase().includes('fit')) Icon = Dumbbell;
@@ -185,21 +185,21 @@ export default async function Home() {
                  <Link 
                    key={cat._id.toString()} 
                    href={`/category/${cat.slug}`} 
-                   className="group relative overflow-hidden rounded-[2.5rem] bg-[#0d0d12] border border-white/5 hover:border-primary-500/50 transition-all duration-500 reveal-up hover-lift aspect-square"
+                   className="group relative overflow-hidden rounded-3xl md:rounded-[2.5rem] bg-[#0d0d12] border border-white/5 hover:border-primary-500/50 transition-all duration-500 reveal-up hover-lift aspect-[4/3] md:aspect-square flex flex-col justify-end"
                    style={{ transitionDelay: `${idx * 100}ms` }}
                  >
                     {/* Background Detail */}
-                    <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-20 group-hover:scale-150 transition-all duration-700">
-                       <Icon className="w-32 h-32" />
+                    <div className="absolute top-0 right-0 p-4 md:p-8 opacity-5 group-hover:opacity-20 group-hover:scale-150 transition-all duration-700">
+                       <Icon className="w-16 h-16 md:w-32 md:h-32" />
                     </div>
 
-                    <div className="absolute inset-0 p-10 flex flex-col justify-between z-10">
-                       <div className="bg-white/5 p-4 rounded-2xl w-fit group-hover:bg-primary-600 transition-colors">
-                          <Icon className="w-7 h-7" />
+                    <div className="relative p-5 md:p-10 flex flex-col justify-between h-full z-10">
+                       <div className="bg-white/5 p-2.5 md:p-4 rounded-xl md:rounded-2xl w-fit group-hover:bg-primary-600 transition-colors shrink-0">
+                          <Icon className="w-4 h-4 md:w-7 md:h-7" />
                        </div>
-                       <div className="mt-8">
-                          <h3 className="text-2xl font-black">{cat.name}</h3>
-                          <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mt-1 group-hover:text-primary-400 transition-colors">
+                       <div className="mt-auto">
+                          <h3 className="text-sm md:text-2xl font-black leading-tight">{cat.name}</h3>
+                          <p className="text-[8px] md:text-[10px] font-black text-gray-500 uppercase tracking-widest mt-1 md:mt-2 group-hover:text-primary-400 transition-colors line-clamp-1">
                             {cat.count || 0} Professional Guides
                           </p>
                        </div>
@@ -220,19 +220,19 @@ export default async function Home() {
       </div>
 
       {/* Magazine Blog Feed - High Fidelity */}
-      <section className="py-32 px-4 bg-dark-bg/80 relative">
+      <section className="py-20 md:py-32 px-4 bg-dark-bg/80 relative">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-center gap-6 mb-20 reveal-up">
-             <h2 className="text-5xl font-black tracking-tighter">Latest Dispatch</h2>
+          <div className="flex items-center gap-6 mb-16 md:mb-20 reveal-up">
+             <h2 className="text-4xl md:text-5xl font-black tracking-tighter">Latest Dispatch</h2>
              <div className="flex-1 h-px bg-white/5"></div>
           </div>
           
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-16">
              {/* Left Column: Big Featured */}
              {latestPosts[0] && (
                <div className="lg:col-span-7 reveal-up">
                  <Link href={`/blog/${latestPosts[0].slug}`} className="group block h-full">
-                    <div className="relative aspect-[16/10] w-full rounded-[3.5rem] overflow-hidden border border-white/5 mb-10 shadow-2xl">
+                    <div className="relative aspect-[4/3] sm:aspect-[16/10] w-full rounded-[2rem] md:rounded-[3.5rem] overflow-hidden border border-white/5 mb-6 md:mb-10 shadow-2xl">
                        <Image 
                          src={getValidImage(latestPosts[0].featuredImage)} 
                          alt={latestPosts[0].title} 
@@ -241,14 +241,14 @@ export default async function Home() {
                          className="object-cover group-hover:scale-105 transition-transform duration-[2s]"
                        />
                        <div className="absolute inset-0 bg-gradient-to-t from-dark-bg/90 via-dark-bg/20 to-transparent"></div>
-                       <div className="absolute bottom-10 left-10 right-10">
-                          <span className="px-4 py-2 bg-primary-600 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl">Featured Report</span>
-                          <h3 className="text-4xl font-black mt-6 leading-tight group-hover:text-primary-400 transition-colors">{latestPosts[0].title}</h3>
+                       <div className="absolute bottom-6 left-6 right-6 md:bottom-10 md:left-10 md:right-10">
+                          <span className="px-3 md:px-4 py-1.5 md:py-2 bg-primary-600 rounded-lg md:rounded-xl text-[8px] md:text-[10px] font-black uppercase tracking-widest shadow-xl">Featured Report</span>
+                          <h3 className="text-2xl md:text-4xl font-black mt-4 md:mt-6 leading-tight group-hover:text-primary-400 transition-colors line-clamp-3">{latestPosts[0].title}</h3>
                        </div>
                     </div>
-                    <div className="flex items-center gap-4 text-xs font-bold text-gray-500 uppercase tracking-widest px-4">
+                    <div className="flex items-center gap-3 md:gap-4 text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest px-2 md:px-4">
                        <span className="text-primary-500">{latestPosts[0].category?.name}</span>
-                       <span className="w-1.5 h-1.5 bg-gray-800 rounded-full"></span>
+                       <span className="w-1 md:w-1.5 h-1 md:h-1.5 bg-gray-800 rounded-full"></span>
                        <span>8 Min Read</span>
                     </div>
                  </Link>
@@ -256,38 +256,44 @@ export default async function Home() {
              )}
 
              {/* Right Column: Mini Feed */}
-             <div className="lg:col-span-5 flex flex-col justify-between gap-12">
+             <div className="lg:col-span-5 flex flex-col justify-between gap-4 md:gap-6">
                 {latestPosts.slice(1).map((post, i) => (
                   <Link 
                     key={post._id.toString()} 
                     href={`/blog/${post.slug}`} 
-                    className="group flex gap-8 items-start reveal-up"
-                    style={{ transitionDelay: `${(i+1)*200}ms` }}
+                    className="group bg-[#0b0b12] rounded-[1.5rem] md:rounded-[2.5rem] border border-white/5 p-3 md:p-4 flex gap-4 md:gap-6 items-center hover:border-primary-500/30 overflow-hidden hover:shadow-[0_10px_40px_rgba(59,130,246,0.1)] transition-all duration-500 hover:-translate-y-1 relative"
+                    style={{ transitionDelay: `${(i+1)*100}ms` }}
                   >
-                     <div className="relative w-36 h-36 rounded-[2rem] overflow-hidden border border-white/5 bg-gray-900 group-hover:border-primary-500/50 transition-all shrink-0">
-                        <Image src={getValidImage(post.featuredImage)} alt={post.title} fill sizes="144px" className="object-cover transition-transform group-hover:scale-110 duration-700" />
+                     {/* Hover glow inside card */}
+                     <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-primary-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+
+                     <div className="relative w-24 h-24 md:w-32 md:h-32 rounded-[1rem] md:rounded-[1.5rem] overflow-hidden bg-[#050508] shrink-0 border border-white/5 z-10 shadow-inner">
+                        <Image src={getValidImage(post.featuredImage)} alt={post.title} fill sizes="128px" className="object-cover transition-transform group-hover:scale-110 duration-700" />
                      </div>
-                     <div className="pt-2">
-                        <span className="text-primary-500 font-black text-[10px] uppercase tracking-widest">{post.category?.name}</span>
-                        <h4 className="text-2xl font-black mt-2 leading-tight group-hover:text-primary-400 transition-colors line-clamp-2">{post.title}</h4>
-                        <div className="flex items-center gap-3 mt-4">
-                           <div className="w-8 h-px bg-gray-800"></div>
-                           <span className="text-[10px] text-gray-500 font-black uppercase tracking-tighter">Review Dispatch</span>
+                     <div className="flex-1 py-1 md:py-2 relative z-10">
+                        <div className="flex items-center gap-2 mb-1.5 md:mb-2">
+                           <span className="w-1 md:w-1.5 h-1 md:h-1.5 rounded-full bg-primary-500"></span>
+                           <span className="text-primary-400 font-black text-[8px] md:text-[9px] uppercase tracking-[0.2em]">{post.category?.name}</span>
+                        </div>
+                        <h4 className="text-base md:text-xl font-black leading-snug group-hover:text-white text-gray-200 transition-colors line-clamp-2">{post.title}</h4>
+                        <div className="flex items-center gap-1 md:gap-2 mt-2 md:mt-4 text-[8px] md:text-[9px] font-bold text-gray-500 uppercase tracking-widest">
+                           <span>Read Report</span>
+                           <ArrowRight className="w-2.5 h-2.5 md:w-3 md:h-3 group-hover:translate-x-1 group-hover:text-primary-400 transition-all" />
                         </div>
                      </div>
                   </Link>
                 ))}
                 
                 {/* CTA Card */}
-                <div className="p-10 rounded-[3rem] bg-premium-mesh border border-white/10 mt-auto relative overflow-hidden group hover:border-white/20 transition-all">
+                <div className="p-6 md:p-10 rounded-[1.5rem] md:rounded-[3rem] bg-premium-mesh border border-white/10 mt-6 md:mt-auto relative overflow-hidden group hover:border-white/20 transition-all">
                    <div className="relative z-10">
-                      <h5 className="text-xl font-black mb-2">Want to see more?</h5>
-                      <p className="text-sm text-gray-400 mb-8 font-light leading-relaxed">Join the inner circle. Access our full historical archive of 500+ deep-dive tech reports.</p>
-                      <Link href="/blog" className="flex items-center gap-2 text-white font-black text-xs uppercase tracking-[0.2em] group">
-                         Browse Archive <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      <h5 className="text-lg md:text-xl font-black mb-1 md:mb-2 text-white">Want to see more?</h5>
+                      <p className="text-xs md:text-sm text-gray-400 mb-6 md:mb-8 font-light leading-relaxed">Join the inner circle. Access our full historical archive of deep-dive tech reports.</p>
+                      <Link href="/blog" className="flex items-center gap-2 text-white font-black text-[10px] md:text-xs uppercase tracking-[0.2em] group w-max">
+                         Browse Archive <ArrowRight className="w-3 h-3 md:w-4 md:h-4 group-hover:translate-x-1 transition-transform" />
                       </Link>
                    </div>
-                   <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-white/5 rounded-full blur-3xl group-hover:bg-primary-500/10 transition-colors"></div>
+                   <div className="absolute -bottom-10 -right-10 w-32 h-32 md:w-40 md:h-40 bg-white/5 rounded-full blur-3xl group-hover:bg-primary-500/10 transition-colors"></div>
                 </div>
              </div>
           </div>
@@ -295,13 +301,13 @@ export default async function Home() {
       </section>
 
       {/* Top Picks: Detailed Grid */}
-      <section className="py-32 px-4 bg-[#0a0a0f] border-t border-white/5">
+      <section className="py-20 md:py-32 px-4 bg-[#0a0a0f] border-t border-white/5">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row items-baseline justify-between mb-20 gap-4 reveal-up">
-            <h2 className="text-4xl font-black tracking-tighter flex items-center gap-4">
-              <Star className="text-yellow-500 fill-yellow-500 w-8 h-8" /> Best of 2026
+          <div className="flex flex-col md:flex-row items-center md:items-baseline justify-between mb-12 md:mb-20 gap-6 md:gap-4 reveal-up text-center md:text-left">
+            <h2 className="text-3xl md:text-4xl font-black tracking-tighter flex items-center justify-center md:justify-start gap-4">
+              <Star className="text-yellow-500 fill-yellow-500 w-6 h-6 md:w-8 md:h-8" /> Best of 2026
             </h2>
-            <Link href="/comparison" className="px-8 py-3 rounded-2xl glass-premium text-xs font-black uppercase tracking-widest hover:bg-white/10 transition-all">
+            <Link href="/comparison" className="px-6 py-4 md:px-8 md:py-3 w-full md:w-auto text-center rounded-[1rem] md:rounded-2xl glass-premium text-[10px] md:text-xs font-black uppercase tracking-widest hover:bg-white/10 transition-all">
               Full Comparison Studio
             </Link>
           </div>
@@ -346,31 +352,31 @@ export default async function Home() {
       </section>
 
       {/* Ultra-Premium Newsletter Breakout */}
-      <section className="relative py-40 px-4 overflow-hidden">
+      <section className="relative py-20 md:py-40 px-4 overflow-hidden">
         <div className="absolute inset-0 bg-premium-mesh opacity-30"></div>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary-600 opacity-20 rounded-full blur-[150px] animate-pulse"></div>
 
         <div className="max-w-4xl mx-auto relative z-10 reveal-up">
-          <div className="bg-[#050505]/40 backdrop-blur-[40px] border border-white/10 p-16 md:p-24 rounded-[4rem] text-center shadow-[0_0_100px_rgba(0,0,0,0.5)]">
-            <h2 className="text-5xl md:text-7xl font-black mb-8 tracking-tighter leading-[0.9]">Gear <br/><span className="premium-gradient">Elevated.</span></h2>
-            <p className="text-xl text-gray-400 mb-12 max-w-lg mx-auto font-light leading-relaxed">
+          <div className="bg-[#050505]/40 backdrop-blur-[40px] border border-white/10 p-8 md:p-24 rounded-[3rem] md:rounded-[4rem] text-center shadow-[0_0_100px_rgba(0,0,0,0.5)]">
+            <h2 className="text-4xl sm:text-5xl md:text-7xl font-black mb-6 md:mb-8 tracking-tighter leading-[1.1] md:leading-[0.9]">Gear <br className="md:hidden" /><span className="premium-gradient">Elevated.</span></h2>
+            <p className="text-base md:text-xl text-gray-400 mb-8 md:mb-12 max-w-lg mx-auto font-light leading-relaxed">
               We send the elite tech insights you actually need once a week. Join the club of 50k+ enthusiasts.
             </p>
-            <form className="flex flex-col md:flex-row gap-4 max-w-2xl mx-auto bg-black/40 p-2 rounded-[2rem] border border-white/5">
+            <form className="flex flex-col md:flex-row gap-4 max-w-2xl mx-auto bg-black/40 p-2 rounded-[1.5rem] md:rounded-[2rem] border border-white/5">
               <input 
                 type="email" 
                 placeholder="reader@elite.com" 
-                className="flex-1 px-8 py-5 rounded-2xl bg-transparent focus:outline-none text-lg font-light placeholder:text-gray-700" 
+                className="flex-1 px-6 py-4 md:px-8 md:py-5 rounded-xl md:rounded-2xl bg-transparent focus:outline-none text-base md:text-lg font-light placeholder:text-gray-700 text-center md:text-left" 
                 required
               />
-              <button type="submit" className="px-10 py-5 bg-primary-600 hover:bg-primary-500 text-white font-black rounded-[1.5rem] transition-all shadow-glow transform active:scale-95">
+              <button type="submit" className="px-6 py-4 md:px-10 md:py-5 bg-primary-600 hover:bg-primary-500 text-white font-black rounded-xl md:rounded-[1.5rem] transition-all shadow-glow transform active:scale-95 text-sm md:text-base tracking-[0.1em]">
                 Join Today
               </button>
             </form>
-            <div className="mt-10 flex flex-wrap justify-center gap-6 opacity-30">
-               <span className="text-[10px] font-black uppercase tracking-widest">No Ads</span>
-               <span className="text-[10px] font-black uppercase tracking-widest">Expert Advice</span>
-               <span className="text-[10px] font-black uppercase tracking-widest">Secure Privacy</span>
+            <div className="mt-8 md:mt-10 flex flex-wrap justify-center gap-4 md:gap-6 opacity-40 md:opacity-30">
+               <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest">No Ads</span>
+               <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest hidden sm:inline">Expert Advice</span>
+               <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest">Secure Privacy</span>
             </div>
           </div>
         </div>

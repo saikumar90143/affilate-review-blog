@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import connectToDatabase from "@/lib/mongodb";
 import Product from "@/models/Product";
+import Category from "@/models/Category";
 import { ProductSchema } from "@/lib/validations";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";

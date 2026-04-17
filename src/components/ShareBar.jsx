@@ -1,14 +1,18 @@
 "use client";
 
 import { Share2, Link as LinkIcon, Check, Send, Globe } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function ShareBar({ title }) {
   const [copied, setCopied] = useState(false);
+  const [shareUrl, setShareUrl] = useState("");
 
-  const shareUrl = typeof window !== "undefined" ? window.location.href : "";
+  useEffect(() => {
+    setShareUrl(window.location.href);
+  }, []);
 
   const copyToClipboard = () => {
+    if (!shareUrl) return;
     navigator.clipboard.writeText(shareUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);

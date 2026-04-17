@@ -24,13 +24,16 @@ export default function AdminProducts() {
   const [success, setSuccess] = useState(null);
   const [search, setSearch] = useState("");
   const [form, setForm] = useState(blank);
+  const [isAddingCat, setIsAddingCat] = useState(false);
+  const [newCatName, setNewCatName] = useState("");
+  const [addingCatLoading, setAddingCatLoading] = useState(false);
 
   const fetchAll = useCallback(async () => {
     setLoading(true);
     try {
       const [prodRes, catRes] = await Promise.all([
         fetch("/api/products", { cache: 'no-store' }),
-        fetch("/api/categories", { cache: 'no-store' })
+        fetch("/api/categories?type=product", { cache: 'no-store' })
       ]);
       if (prodRes.ok) setProducts(await prodRes.json());
       if (catRes.ok)  setCategories(await catRes.json());
@@ -106,6 +109,34 @@ export default function AdminProducts() {
     if (!confirm("Delete this product permanently?")) return;
     const res = await fetch(`/api/products/${id}`, { method: "DELETE" });
     if (res.ok) fetchAll();
+  };
+
+  const handleQuickAddCategory = async () => {
+    if (!newCatName.trim()) return;
+    setAddingCatLoading(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/categories", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: newCatName.trim(),
+          slug: toSlug(newCatName.trim()),
+          for: ["product"],
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error?.[0]?.message || data.error || "Failed to create category");
+      
+      setCategories(prev => [data, ...prev]);
+      setForm(f => ({ ...f, category: data._id }));
+      setNewCatName("");
+      setIsAddingCat(false);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setAddingCatLoading(false);
+    }
   };
 
   return (
@@ -210,11 +241,45 @@ export default function AdminProducts() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="field">
-                <label className="label">Category Segment *</label>
-                <select required value={form.category} onChange={e => setForm(f => ({...f, category: e.target.value}))} className="input">
-                  <option value="">Select Vertical…</option>
-                  {categories.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
-                </select>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="label mb-0">Category Segment *</label>
+                  <button 
+                    type="button" 
+                    onClick={() => {
+                      setIsAddingCat(!isAddingCat);
+                      setNewCatName("");
+                    }}
+                    className="text-[10px] font-black uppercase tracking-widest text-green-400 hover:text-green-300 transition-colors"
+                  >
+                    {isAddingCat ? "[ Cancel ]" : "[ Add New ]"}
+                  </button>
+                </div>
+
+                {isAddingCat ? (
+                  <div className="flex gap-2">
+                    <input 
+                      autoFocus
+                      placeholder="New category..." 
+                      value={newCatName}
+                      onChange={e => setNewCatName(e.target.value)}
+                      className="input flex-1 border-green-500/20 focus:border-green-500/50"
+                      onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), handleQuickAddCategory())}
+                    />
+                    <button 
+                      type="button"
+                      disabled={addingCatLoading}
+                      onClick={handleQuickAddCategory}
+                      className="bg-green-600 hover:bg-green-500 disabled:opacity-50 text-white px-4 rounded-xl transition-all"
+                    >
+                      {addingCatLoading ? "..." : "Save"}
+                    </button>
+                  </div>
+                ) : (
+                  <select required value={form.category} onChange={e => setForm(f => ({...f, category: e.target.value}))} className="input">
+                    <option value="">Select Vertical…</option>
+                    {categories.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
+                  </select>
+                )}
               </div>
               <div className="field">
                 <label className="label">Elite Rating (0–5) *</label>

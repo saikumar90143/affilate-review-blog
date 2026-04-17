@@ -8,8 +8,13 @@ import { revalidatePath } from "next/cache";
 
 export async function GET(req) {
   try {
+    const { searchParams } = new URL(req.url);
+    const type = searchParams.get("type"); // e.g. "post" or "product"
+    
     await connectToDatabase();
-    const categories = await Category.find({}).sort({ createdAt: -1 });
+    
+    const query = type ? { for: type } : {};
+    const categories = await Category.find(query).sort({ createdAt: -1 });
     return NextResponse.json(categories);
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch categories" }, { status: 500 });

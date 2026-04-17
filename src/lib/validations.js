@@ -10,6 +10,7 @@ export const CategorySchema = z.object({
   name: z.string().min(2, "Category name must be at least 2 characters"),
   slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Slug must be URL-safe (lowercase, hyphens)"),
   description: z.string().optional().default(""),
+  for: z.array(z.enum(["post", "product"])).min(1, "Select at least one target (post or product)").default(["post", "product"]),
 });
 
 export const PostSchema = z.object({

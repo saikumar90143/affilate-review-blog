@@ -12,7 +12,6 @@ const navLinks = [
   { href: "/admin/blogs",      label: "AI Blogs",    icon: Bot              },
   { href: "/admin/ai-generator", label: "AI Generator", icon: Bot             },
   { href: "/admin/products",   label: "Products",    icon: ShoppingBag      },
-  { href: "/admin/categories", label: "Categories",  icon: FolderTree       },
   { href: "/admin/settings",   label: "Settings",    icon: Settings         },
 ];
 

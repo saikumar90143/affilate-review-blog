@@ -29,13 +29,16 @@ export default function AdminPosts() {
   const [success, setSuccess] = useState(null);
   const [search, setSearch] = useState("");
   const [form, setForm] = useState(blank);
+  const [isAddingCat, setIsAddingCat] = useState(false);
+  const [newCatName, setNewCatName] = useState("");
+  const [addingCatLoading, setAddingCatLoading] = useState(false);
 
   const fetchAll = useCallback(async () => {
     setLoading(true);
     try {
       const [postsRes, catsRes] = await Promise.all([
         fetch(`/api/posts?limit=100&admin=true`, { cache: 'no-store' }),
-        fetch("/api/categories", { cache: 'no-store' }),
+        fetch("/api/categories?type=post", { cache: 'no-store' }),
       ]);
       if (postsRes.ok) setPosts((await postsRes.json()).posts || []);
       if (catsRes.ok)  setCategories(await catsRes.json());
@@ -114,6 +117,37 @@ export default function AdminPosts() {
       }),
     });
     fetchAll();
+  };
+
+  const handleQuickAddCategory = async () => {
+    if (!newCatName.trim()) return;
+    setAddingCatLoading(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/categories", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: newCatName.trim(),
+          slug: toSlug(newCatName.trim()),
+          for: ["post"],
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error?.[0]?.message || data.error || "Failed to create category");
+      
+      // Update local categories list
+      setCategories(prev => [data, ...prev]);
+      // Select it in form
+      setForm(f => ({ ...f, category: data._id }));
+      // Reset state
+      setNewCatName("");
+      setIsAddingCat(false);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setAddingCatLoading(false);
+    }
   };
 
   return (
@@ -260,11 +294,45 @@ export default function AdminPosts() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="field">
-                <label className="label">Vertical Category *</label>
-                <select required value={form.category} onChange={e => setForm(f => ({...f, category: e.target.value}))} className="input">
-                  <option value="">Select Vertial…</option>
-                  {categories.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
-                </select>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="label mb-0">Vertical Category *</label>
+                  <button 
+                    type="button" 
+                    onClick={() => {
+                      setIsAddingCat(!isAddingCat);
+                      setNewCatName("");
+                    }}
+                    className="text-[10px] font-black uppercase tracking-widest text-primary-400 hover:text-primary-300 transition-colors"
+                  >
+                    {isAddingCat ? "[ Cancel ]" : "[ Add New ]"}
+                  </button>
+                </div>
+                
+                {isAddingCat ? (
+                  <div className="flex gap-2">
+                    <input 
+                      autoFocus
+                      placeholder="New category name..." 
+                      value={newCatName}
+                      onChange={e => setNewCatName(e.target.value)}
+                      className="input flex-1"
+                      onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), handleQuickAddCategory())}
+                    />
+                    <button 
+                      type="button"
+                      disabled={addingCatLoading}
+                      onClick={handleQuickAddCategory}
+                      className="bg-primary-600 hover:bg-primary-500 disabled:opacity-50 text-white px-4 rounded-xl transition-all"
+                    >
+                      {addingCatLoading ? "..." : "Save"}
+                    </button>
+                  </div>
+                ) : (
+                  <select required value={form.category} onChange={e => setForm(f => ({...f, category: e.target.value}))} className="input">
+                    <option value="">Select Vertical…</option>
+                    {categories.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
+                  </select>
+                )}
               </div>
               <ImageUpload 
                 label="Primary Visual (Featured)" 
