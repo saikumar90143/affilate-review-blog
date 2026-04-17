@@ -24,12 +24,13 @@ export async function GET(req) {
     if (search) filter.title = { $regex: search, $options: "i" };
 
     const [posts, total] = await Promise.all([
-      Post.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).populate("category", "name slug"),
+      Post.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).populate("category", "name slug").lean(),
       Post.countDocuments(filter),
     ]);
 
     return NextResponse.json({ posts, totalPages: Math.ceil(total / limit), currentPage: page, total });
-  } catch {
+  } catch (error) {
+    console.error("GET /api/posts Error:", error);
     return NextResponse.json({ error: "Failed to fetch posts" }, { status: 500 });
   }
 }

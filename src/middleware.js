@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
-export async function proxy(req) {
+export async function middleware(req) {
   const path = req.nextUrl.pathname;
   
   // Protect all /admin routes
@@ -20,10 +20,12 @@ export async function proxy(req) {
   
   const cspHeader = `
     default-src 'self';
-    script-src 'self' 'unsafe-eval' 'unsafe-inline';
+    connect-src 'self' https://api.cloudinary.com;
+    script-src 'self' 'unsafe-eval' 'unsafe-inline' https://pagead2.googlesyndication.com;
     style-src 'self' 'unsafe-inline';
-    img-src 'self' blob: data: https://dummyimage.com https://images.unsplash.com https://res.cloudinary.com;
+    img-src 'self' blob: data: https://dummyimage.com https://images.unsplash.com https://res.cloudinary.com https://pagead2.googlesyndication.com;
     font-src 'self';
+    frame-src 'self' https://googleads.g.doubleclick.net https://pagead2.googlesyndication.com;
     object-src 'none';
     base-uri 'self';
     form-action 'self';
