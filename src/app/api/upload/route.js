@@ -10,36 +10,34 @@ cloudinary.config({
   secure: true,
 });
 
-export async function POST(req) {
+export async function GET(req) {
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'admin') {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const formData = await req.formData();
-    const file = formData.get("file");
+    const timestamp = Math.round((new Date).getTime() / 1000);
+    
+    // Any params passed here MUST be identical on the client when making the FormData upload
+    const paramsToSign = {
+      timestamp: timestamp,
+      folder: 'affiliate-blog'
+    };
 
-    if (!file) {
-      return NextResponse.json({ error: "No file provided" }, { status: 400 });
-    }
+    const signature = cloudinary.utils.api_sign_request(
+      paramsToSign, 
+      process.env.CLOUDINARY_API_SECRET
+    );
 
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-
-    const uploadResult = await new Promise((resolve, reject) => {
-      cloudinary.uploader.upload_stream(
-        { folder: 'affiliate-blog' },
-        (error, result) => {
-          if (error) reject(error);
-          else resolve(result);
-        }
-      ).end(buffer);
+    return NextResponse.json({ 
+      timestamp, 
+      signature, 
+      api_key: process.env.CLOUDINARY_API_KEY,
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME
     });
-
-    return NextResponse.json({ url: uploadResult.secure_url });
   } catch (error) {
-    console.error("Upload error:", error);
-    return NextResponse.json({ error: "Failed to upload file" }, { status: 500 });
+    console.error("Signature generation error:", error);
+    return NextResponse.json({ error: "Failed to generate signature" }, { status: 500 });
   }
 }

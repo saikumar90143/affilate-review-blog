@@ -17,19 +17,28 @@ export default function ImageUpload({ onUpload, defaultValue = "", label = "Uplo
     setError(null);
 
     try {
-      // Proxy through our backend to evade adblockers and secure our keys
+      // 1. Fetch the secure upload signature from our backend
+      const sigRes = await fetch("/api/upload");
+      if (!sigRes.ok) throw new Error("Failed to get upload signature");
+      const { timestamp, signature, api_key, cloud_name } = await sigRes.json();
+
+      // 2. Upload directly to Cloudinary bypassing Next.js/Vercel payload limits
       const formData = new FormData();
       formData.append("file", file);
+      formData.append("api_key", api_key);
+      formData.append("timestamp", timestamp);
+      formData.append("signature", signature);
+      formData.append("folder", "affiliate-blog");
 
-      const res = await fetch("/api/upload", {
+      const uploadRes = await fetch(`https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`, {
         method: "POST",
         body: formData,
       });
 
-      if (!res.ok) throw new Error("Upload proxy failed");
+      if (!uploadRes.ok) throw new Error("Cloudinary direct upload failed");
       
-      const data = await res.json();
-      const url = data.url;
+      const data = await uploadRes.json();
+      const url = data.secure_url;
       
       setPreview(url);
       onUpload(url);
