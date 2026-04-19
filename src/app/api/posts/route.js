@@ -21,9 +21,11 @@ export async function GET(req) {
     await connectToDatabase();
     console.log("[GET /api/posts] Connected to DB");
 
-    // Admins see all posts (including drafts); public sees only published
-    const filter = admin ? {} : { isPublished: true };
+    // Admins see all posts (including drafts); public sees only published (or not explicitly draft)
+    const filter = admin ? {} : { isPublished: { $ne: false } };
     if (search) filter.title = { $regex: search, $options: "i" };
+
+    console.log(`[GET /api/posts] Using filter:`, JSON.stringify(filter));
 
     const [posts, total] = await Promise.all([
       Post.find(filter)
@@ -36,10 +38,10 @@ export async function GET(req) {
       Post.countDocuments(filter),
     ]);
 
-    console.log(`[GET /api/posts] Successfully fetched ${posts.length} posts`);
+    console.log(`[GET /api/posts] Found ${posts.length} posts. Total count: ${total}`);
     return NextResponse.json({ posts, totalPages: Math.ceil(total / limit), currentPage: page, total });
   } catch (error) {
-    console.error("[GET /api/posts] CRITICAL ERROR:", error);
+    console.error("[GET /api/posts] ERROR:", error);
     return NextResponse.json({ error: "Failed to fetch posts", details: error.message }, { status: 500 });
   }
 }

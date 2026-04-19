@@ -5,6 +5,8 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FloatingComparisonBar from "@/components/FloatingComparisonBar";
+import BackToTop from "@/components/BackToTop";
+import ExitIntentPopup from "@/components/ExitIntentPopup";
 import { ComparisonProvider } from "@/context/ComparisonContext";
 
 const outfit = Outfit({ 
@@ -23,7 +25,7 @@ export default function RootLayout({ children }) {
   const adClient = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
 
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark" data-scroll-behavior="smooth">
       <body className={`${outfit.variable} font-sans min-h-screen flex flex-col`}>
         {adClient && (
           <Script
@@ -38,6 +40,8 @@ export default function RootLayout({ children }) {
           <main className="flex-1">{children}</main>
           <Footer />
           <FloatingComparisonBar />
+          <BackToTop />
+          <ExitIntentPopup />
         </ComparisonProvider>
       </body>
     </html>

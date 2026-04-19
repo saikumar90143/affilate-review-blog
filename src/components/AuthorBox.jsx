@@ -23,6 +23,7 @@ export default function AuthorBox({ author }) {
                   src={author.authorImage} 
                   alt={author.authorName} 
                   fill 
+                  sizes="128px"
                   className="object-cover rounded-[1.8rem]"
                 />
               ) : (

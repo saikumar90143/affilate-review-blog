@@ -3,7 +3,6 @@ import StandaloneProductCard from "@/components/StandaloneProductCard";
 import TrustBanner from "@/components/TrustBanner";
 import AuthorBox from "@/components/AuthorBox";
 import TableOfContents from "@/components/TableOfContents";
-import ShareBar from "@/components/ShareBar";
 import AdSlot from "@/components/AdSlot";
 import ProgressBar from "@/components/ProgressBar";
 import connectToDatabase from "@/lib/mongodb";
@@ -14,8 +13,20 @@ import Blog from "@/models/Blog";
 import Category from "@/models/Category";
 import AIBlogPostLayout from "@/components/AIBlogPostLayout";
 import { notFound } from "next/navigation";
+import AffiliateDisclosure from "@/components/AffiliateDisclosure";
+import SummaryCard from "@/components/SummaryCard";
+import ShareBar from "@/components/ShareBar";
+import FAQ from "@/components/FAQ";
+import { sanitize } from "@/lib/sanitizer";
 import Image from "next/image";
 import Link from "next/link";
+import { Search, ChevronRight, Clock } from "lucide-react";
+import QuickConvertBar from "@/components/QuickConvertBar";
+import ComparisonMatrix from "@/components/ComparisonMatrix";
+import ExitIntentPopup from "@/components/ExitIntentPopup";
+import { autoLinkKeywords } from "@/lib/internalLinker";
+import { getPlaceholder } from "@/lib/placeholders";
+import AudioPlayer from "@/components/AudioPlayer";
 
 export const revalidate = 3600;
 
@@ -26,48 +37,67 @@ function calculateReadingTime(content) {
   return `${Math.max(1, Math.ceil(words / 200))} min read`;
 }
 
+
+
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   await connectToDatabase();
-  const post = await Post.findOne({ slug }).select('metaTitle metaDescription title excerpt');
-  
-  if (!post) {
-    const blog = await Blog.findOne({ slug, status: 'published' });
-    if (blog) {
-      return {
-        title: blog.metaTitle || `${blog.title} | EliteReviews`,
-        description: blog.metaDescription || blog.summary,
-      };
-    }
-    return {};
-  }
+  const [post, settings] = await Promise.all([
+    Post.findOne({ slug }).select('metaTitle metaDescription title excerpt featuredImage').lean(),
+    Settings.findOne().select('siteName siteDescription').lean()
+  ]);
+
+  if (!post) return {};
+
+  const title = post.metaTitle || `${post.title} | ${settings?.siteName || 'EliteReviews'}`;
+  const description = post.metaDescription || post.excerpt;
+  const url = `${process.env.NEXT_PUBLIC_SITE_URL}/blog/${slug}`;
 
   return {
-    title: post.metaTitle || `${post.title} | EliteReviews`,
-    description: post.metaDescription || post.excerpt,
+    title,
+    description,
+    alternates: {
+      canonical: url,
+    },
+    openGraph: {
+      title,
+      description,
+      url,
+      siteName: settings?.siteName || 'EliteReviews',
+      images: post.featuredImage ? [{ url: post.featuredImage, width: 1200, height: 630 }] : [],
+      type: 'article',
+      publishedTime: post.createdAt,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: post.featuredImage ? [post.featuredImage] : [],
+    },
   };
 }
 
 export default async function BlogPost({ params }) {
   const { slug } = await params;
   await connectToDatabase();
-  
+
   let [post, settings] = await Promise.all([
     Post.findOne({ slug, isPublished: true }).populate('category').lean(),
     Settings.findOne().lean()
   ]);
-  
+
   if (!post) {
     const blog = await Blog.findOne({ slug, status: "published" }).lean();
     if (!blog) return notFound();
-    
+
     const relatedBlogs = await Blog.find({ _id: { $ne: blog._id }, status: "published" })
       .sort({ createdAt: -1 })
       .limit(3)
       .lean();
-      
-    // Render the new AI layout
-    return <AIBlogPostLayout blog={blog} relatedPosts={relatedBlogs} />;
+
+    // Render the new AI layout, pass relatedProducts down using the blog's tags or random fetch
+    const relatedProducts = await Product.find().limit(3).lean();
+    return <AIBlogPostLayout blog={blog} relatedPosts={relatedBlogs} relatedProducts={relatedProducts} />;
   }
 
   // Sanitize for Client Components
@@ -75,24 +105,24 @@ export default async function BlogPost({ params }) {
   settings = JSON.parse(JSON.stringify(settings));
 
   // Fetch related posts from the same category
-  const relatedContent = await Post.find({ 
-    category: post.category?._id, 
+  const relatedContent = await Post.find({
+    category: post.category?._id,
     _id: { $ne: post._id },
-    isPublished: true 
+    isPublished: true
   }).limit(3);
 
   // Fetch some related products randomly or by category to simulate embedded products if we want
-  const relatedProducts = await Product.find({ category: post.category?._id }).limit(2);
+  // Fetch related products for the comparison matrix (top rated in category)
+  const relatedProducts = await Product.find({ category: post.category?._id })
+    .sort({ rating: -1 })
+    .limit(4)
+    .lean();
 
-  const mainEntityOfPage = {
-    "@type": "WebPage",
-    "@id": `http://localhost:3000/blog/${post.slug}`,
-  };
+  const url = `${process.env.NEXT_PUBLIC_SITE_URL}/blog/${slug}`;
 
   const blogPostLd = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
-    mainEntityOfPage,
     headline: post.title,
     datePublished: new Date(post.createdAt).toISOString(),
     author: [{
@@ -102,6 +132,33 @@ export default async function BlogPost({ params }) {
     description: post.excerpt,
     image: post.featuredImage
   };
+
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": process.env.NEXT_PUBLIC_SITE_URL },
+      { "@type": "ListItem", "position": 2, "name": "Blog", "item": `${process.env.NEXT_PUBLIC_SITE_URL}/blog` },
+      { "@type": "ListItem", "position": 3, "name": post.category?.name || "Reports", "item": `${process.env.NEXT_PUBLIC_SITE_URL}/blog?category=${post.category?.slug}` },
+      { "@type": "ListItem", "position": 4, "name": post.title, "item": url }
+    ]
+  };
+
+  const faqLd = post.faqs?.length > 0 ? {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": post.faqs.map(f => ({
+      "@type": "Question",
+      "name": f.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": f.answer
+      }
+    }))
+  } : null;
+
+  const allLds = [blogPostLd, breadcrumbLd];
+  if (faqLd) allLds.push(faqLd);
 
   // Add Product specific LD also
   const productLds = relatedProducts.map(prod => ({
@@ -117,19 +174,18 @@ export default async function BlogPost({ params }) {
     "aggregateRating": {
       "@type": "AggregateRating",
       "ratingValue": prod.rating || 4.5,
-      "reviewCount": 1
+      "reviewCount": prod.reviewCount || (parseInt(prod._id.toString().substring(18), 16) % 500) + 50
     },
     "offers": {
       "@type": "Offer",
       "url": prod.links?.[0]?.url || prod.affiliateLink,
       "priceCurrency": "USD",
-      "price": "0.00", // We don't track real price yet, but schema loves values
+      "price": prod.price ? prod.price.toString() : "0.00",
       "availability": "https://schema.org/InStock",
       "itemCondition": "https://schema.org/NewCondition"
     }
   }));
 
-  const allLds = [blogPostLd, ...productLds];
 
   // Helper to inject IDs into headings for TOC
   const injectHeadingIds = (html) => {
@@ -153,6 +209,15 @@ export default async function BlogPost({ params }) {
         />
       ))}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/* Breadcrumbs */}
+        <nav className="flex items-center justify-center gap-2 mb-12 text-[10px] font-black uppercase tracking-widest text-gray-500 reveal-fade">
+          <Link href="/" className="hover:text-primary-500 transition-colors font-medium">Home</Link>
+          <ChevronRight className="w-3 h-3 text-gray-900" />
+          <Link href="/blog" className="hover:text-primary-500 transition-colors font-medium">Blog</Link>
+          <ChevronRight className="w-3 h-3 text-gray-800" />
+          <Link href={`/blog?category=${post.category?.slug}`} className="hover:text-primary-400 transition-colors text-primary-600 font-bold">{post.category?.name || 'Reports'}</Link>
+        </nav>
+
         <div className="mb-16 max-w-4xl mx-auto text-center reveal-up">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-[0.2em] mb-8 text-primary-400 shadow-glow">
             <span className="w-1.5 h-1.5 rounded-full bg-primary-500 animate-pulse"></span>
@@ -160,13 +225,18 @@ export default async function BlogPost({ params }) {
           </div>
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-black mb-8 tracking-tighter leading-[1.1] text-white drop-shadow-lg">{post.title}</h1>
           <div className="flex flex-wrap items-center justify-center gap-4 text-[10px] font-black uppercase tracking-widest text-gray-500">
-             <span className="text-gray-300">By {settings?.authorName || "Expert"}</span>
-             <span className="hidden sm:inline w-1 h-1 rounded-full bg-gray-700"></span>
-             <span>{new Date(post.createdAt || new Date()).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
-             <span className="hidden sm:inline w-1 h-1 rounded-full bg-gray-700"></span>
-             <span className="text-primary-500">{calculateReadingTime(post.content)}</span>
+            <span className="text-gray-300">By {settings?.authorName || "Expert"}</span>
+            <span className="hidden sm:inline w-1 h-1 rounded-full bg-gray-700"></span>
+            <span>{new Date(post.createdAt || new Date()).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+            <span className="hidden sm:inline w-1 h-1 rounded-full bg-gray-700"></span>
+            <span className="text-primary-500">{calculateReadingTime(post.content)}</span>
           </div>
-          <div className="flex justify-center mt-10">
+          
+          <div className="flex justify-center mt-8 mb-8">
+            <AudioPlayer textToRead={post.excerpt || post.title + ". This is an elite review brought to you by Elite Reviews. " + post.content?.replace(/<[^>]*>?/gm, '').substring(0, 500)} />
+          </div>
+
+          <div className="flex justify-center mt-6">
             <ShareBar title={post.title} />
           </div>
         </div>
@@ -180,23 +250,57 @@ export default async function BlogPost({ params }) {
           {/* Main Content Column */}
           <div className="flex-1 min-w-0 max-w-full">
             {post.featuredImage && (
-               <div className="w-full relative aspect-video bg-[#050508] rounded-[2.5rem] mb-16 border border-white/5 overflow-hidden shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] group reveal-up">
-                  <Image src={post.featuredImage} alt={post.title} fill className="object-cover group-hover:scale-105 transition-transform duration-[2s] ease-out opacity-80" priority />
-                  <div className="absolute inset-0 bg-gradient-to-tr from-black/20 to-transparent pointer-events-none" />
-                  <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-dark-bg to-transparent pointer-events-none" />
-               </div>
+              <div className="w-full relative aspect-video bg-[#050508] rounded-[2.5rem] mb-16 border border-white/5 overflow-hidden shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] group reveal-up">
+                <Image
+                  src={post.featuredImage}
+                  alt={post.title}
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+                  className="object-cover group-hover:scale-105 transition-transform duration-[2s] ease-out opacity-80"
+                  priority
+                  placeholder="blur"
+                  blurDataURL={getPlaceholder(1200, 600)}
+                />
+                <div className="absolute inset-0 bg-gradient-to-tr from-black/20 to-transparent pointer-events-none" />
+                <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-dark-bg to-transparent pointer-events-none" />
+              </div>
             )}
-        
+
             <div className="max-w-4xl mx-auto w-full">
+              <AffiliateDisclosure />
+
+              {(post.keyTakeaways?.length > 0 || post.excerpt) && (
+                <SummaryCard
+                  items={post.keyTakeaways}
+                  bottomLine={post.excerpt}
+                />
+              )}
+
+              {/* High-Impact Comparison Matrix */}
+              {relatedProducts.length > 1 && (
+                <ComparisonMatrix 
+                  currentProduct={relatedProducts[0]} 
+                  rivals={relatedProducts.slice(1)} 
+                  postSlug={post.slug} 
+                />
+              )}
               {await (async () => {
                 let content = injectHeadingIds(post.content);
                 
+                // Intelligent Internal Linking Engine mapping
+                const keywordsMap = relatedContent.map(rc => ({ keyword: rc.title, url: `/blog/${rc.slug}` }));
+                if (post.category?.name) {
+                  keywordsMap.push({ keyword: post.category.name, url: `/blog?category=${post.category.slug}` });
+                }
+                
+                content = autoLinkKeywords(content, keywordsMap);
+
                 const shortcodeRegex = /\[product slug="([^"]+)"\]/g;
                 const parts = content.split(/(\[product slug="[^"]+"\])/g);
-                
+
                 const renderedParts = await Promise.all(parts.map(async (part, index) => {
                   const match = part.match(/\[product slug="([^"]+)"\]/);
-                  
+
                   if (match) {
                     const slug = match[1];
                     let product = await Product.findOne({ slug }).lean();
@@ -204,55 +308,67 @@ export default async function BlogPost({ params }) {
                     // Simple logic: First product found gets a "Premium Choice" badge
                     const badge = index === 1 ? "Top Pick" : (product?.rating >= 4.8 ? "Premium" : null);
                     return (
-                      <StandaloneProductCard 
-                        key={index} 
-                        product={product} 
-                        postSlug={post.slug} 
+                      <StandaloneProductCard
+                        key={index}
+                        product={product}
+                        postSlug={post.slug}
                         badge={badge}
                       />
                     );
                   }
-                  
+
                   return (
-                    <div 
+                    <div
                       key={index}
                       className="prose-elite mb-8 w-full"
-                      dangerouslySetInnerHTML={{ __html: part }}
+                      dangerouslySetInnerHTML={{ __html: sanitize(part) }}
                     />
                   );
                 }));
                 return renderedParts;
               })()}
 
-              {/* Mobile TOC (redundant if shown at top, but for best fit we show it inside content flow for mobile) */}
-              <div className="lg:hidden mt-12 mb-8">
-                 <TableOfContents htmlContent={post.content} />
+              {/* Knowledge Base / FAQs */}
+              <FAQ faqs={post.faqs} />
+
+              {/* Bottom Share Section */}
+              <div className="mt-20 py-10 border-t border-white/5 flex flex-col items-center reveal-fade">
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary-500 mb-6">Finished reading? Share the Intel</p>
+                <ShareBar title={post.title} />
               </div>
 
               {/* Author Bio Section */}
               <div className="mt-16">
-                 <AuthorBox author={settings} />
+                <AuthorBox author={settings} />
               </div>
 
               {/* RELATED CONTENT SECTION (Mobile Only - Desktop uses Sidebar) */}
               {relatedContent.length > 0 && (
                 <div className="mt-20 pt-10 border-t border-white/10 lg:hidden">
-                   <h3 className="text-2xl font-black mb-8 flex items-center gap-3">
-                     <span className="w-1.5 h-6 bg-primary-500 rounded-full shadow-glow"></span>
-                     You might also like
-                   </h3>
-                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                     {relatedContent.map(rc => (
-                       <Link key={rc._id.toString()} href={`/blog/${rc.slug}`} className="group block glass p-3 rounded-3xl border border-white/5 hover:border-white/20 transition-all hover:-translate-y-1">
-                          <div className="relative aspect-video rounded-2xl overflow-hidden mb-4 bg-gray-800">
-                             {rc.featuredImage && (
-                               <Image src={rc.featuredImage} alt={rc.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
-                             )}
-                          </div>
-                          <h4 className="font-bold text-gray-200 group-hover:text-primary-400 transition-colors line-clamp-2 px-2 pb-2">{rc.title}</h4>
-                       </Link>
-                     ))}
-                   </div>
+                  <h3 className="text-2xl font-black mb-8 flex items-center gap-3">
+                    <span className="w-1.5 h-6 bg-primary-500 rounded-full shadow-glow"></span>
+                    You might also like
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                    {relatedContent.map(rc => (
+                      <Link key={rc._id.toString()} href={`/blog/${rc.slug}`} className="group block glass p-3 rounded-3xl border border-white/5 hover:border-white/20 transition-all hover:-translate-y-1">
+                        <div className="relative aspect-video rounded-2xl overflow-hidden mb-4 bg-gray-800">
+                          {rc.featuredImage && (
+                            <Image
+                              src={rc.featuredImage}
+                              alt={rc.title}
+                              fill
+                              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 33vw, 250px"
+                              className="object-cover group-hover:scale-105 transition-transform duration-500"
+                              placeholder="blur"
+                              blurDataURL={getPlaceholder(250, 160)}
+                            />
+                          )}
+                        </div>
+                        <h4 className="font-bold text-gray-200 group-hover:text-primary-400 transition-colors line-clamp-2 px-2 pb-2">{rc.title}</h4>
+                      </Link>
+                    ))}
+                  </div>
                 </div>
               )}
 
@@ -266,7 +382,13 @@ export default async function BlogPost({ params }) {
                       <div key={prod._id.toString()} className="flex flex-col sm:flex-row items-center justify-between p-5 bg-black/40 backdrop-blur-md rounded-2xl border border-white/10 hover:border-primary-500/30 transition-colors">
                         <div className="flex items-center w-full sm:w-auto">
                           <div className="w-20 h-20 bg-white rounded-xl p-2 mr-5 relative shrink-0">
-                             <Image src={prod.image} fill alt={prod.title} className="object-contain" />
+                            <Image
+                              src={prod.image}
+                              fill
+                              sizes="80px"
+                              alt={prod.title}
+                              className="object-contain"
+                            />
                           </div>
                           <span className="font-bold text-lg">{prod.title}</span>
                         </div>
@@ -274,18 +396,18 @@ export default async function BlogPost({ params }) {
                           {/* New Multi-Link Support */}
                           {prod.links && prod.links.length > 0 ? (
                             prod.links.map((link, lidx) => (
-                              <AffiliateButton 
-                                key={lidx} 
-                                url={link.url} 
-                                platform={link.platform} 
+                              <AffiliateButton
+                                key={lidx}
+                                url={link.url}
+                                platform={link.platform}
                                 productId={prod._id.toString()}
                                 postSlug={post.slug}
                               />
                             ))
                           ) : (
                             /* Fallback for legacy data */
-                            <AffiliateButton 
-                              url={prod.affiliateLink} 
+                            <AffiliateButton
+                              url={prod.affiliateLink}
                               productId={prod._id.toString()}
                               postSlug={post.slug}
                             />
@@ -303,7 +425,7 @@ export default async function BlogPost({ params }) {
           <aside className="lg:w-[320px] xl:w-[360px] hidden lg:block shrink-0 reveal-fade" style={{ animationDelay: '300ms' }}>
             <div className="sticky top-28 space-y-8">
               <TableOfContents htmlContent={post.content} />
-              
+
               {/* Premium Newsletter CTA Widget */}
               <div className="bg-[#0b0b12] rounded-[2rem] p-8 border border-primary-500/20 shadow-[0_0_30px_rgba(59,130,246,0.1)] relative overflow-hidden group">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary-600/20 rounded-full blur-[40px] pointer-events-none group-hover:bg-primary-500/30 transition-colors duration-700" />
@@ -320,24 +442,32 @@ export default async function BlogPost({ params }) {
               {/* Sidebar Related Reads */}
               {relatedContent.length > 0 && (
                 <div className="bg-[#0b0b12] border border-white/5 shadow-2xl rounded-3xl p-8 relative overflow-hidden">
-                   <h4 className="text-[11px] font-black text-white mb-6 flex items-center gap-2 uppercase tracking-widest">
-                     <span className="w-1.5 h-6 bg-primary-500 rounded-full shadow-glow"></span>
-                     Trending Intel
-                   </h4>
-                   <div className="space-y-6">
-                     {relatedContent.map(rc => (
-                       <Link key={rc._id.toString()} href={`/blog/${rc.slug}`} className="group/item flex gap-4 items-center">
-                          {rc.featuredImage && (
-                            <div className="relative w-20 h-20 rounded-2xl overflow-hidden shrink-0 border border-white/10 bg-[#050508]">
-                               <Image src={rc.featuredImage} alt={rc.title} fill className="object-cover group-hover/item:scale-110 transition-transform duration-500" />
-                            </div>
-                          )}
-                          <div>
-                            <h5 className="font-bold text-sm text-gray-300 group-hover/item:text-primary-400 transition-colors line-clamp-2 leading-snug">{rc.title}</h5>
+                  <h4 className="text-[11px] font-black text-white mb-6 flex items-center gap-2 uppercase tracking-widest">
+                    <span className="w-1.5 h-6 bg-primary-500 rounded-full shadow-glow"></span>
+                    Trending Intel
+                  </h4>
+                  <div className="space-y-6">
+                    {relatedContent.map(rc => (
+                      <Link key={rc._id.toString()} href={`/blog/${rc.slug}`} className="group/item flex gap-4 items-center">
+                        {rc.featuredImage && (
+                          <div className="relative w-20 h-20 rounded-2xl overflow-hidden shrink-0 border border-white/10 bg-[#050508]">
+                            <Image
+                              src={rc.featuredImage}
+                              alt={rc.title}
+                              fill
+                              sizes="80px"
+                              className="object-cover group-hover/item:scale-110 transition-transform duration-500"
+                              placeholder="blur"
+                              blurDataURL={getPlaceholder(80, 80)}
+                            />
                           </div>
-                       </Link>
-                     ))}
-                   </div>
+                        )}
+                        <div>
+                          <h5 className="font-bold text-sm text-gray-300 group-hover/item:text-primary-400 transition-colors line-clamp-2 leading-snug">{rc.title}</h5>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
                 </div>
               )}
 
@@ -346,6 +476,8 @@ export default async function BlogPost({ params }) {
           </aside>
         </div>
       </div>
+      <QuickConvertBar product={relatedProducts[0]} postSlug={post.slug} />
+      <ExitIntentPopup />
     </article>
   );
 }

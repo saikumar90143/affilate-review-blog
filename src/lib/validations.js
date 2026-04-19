@@ -26,6 +26,7 @@ export const PostSchema = z.object({
   isPublished: z.boolean().optional().default(true),
   metaTitle: z.string().optional().default(""),
   metaDescription: z.string().optional().default(""),
+  keyTakeaways: z.array(z.string()).optional().default([]),
 }).passthrough(); // allow extra fields like _id, __v from edit payloads
 
 export const ProductSchema = z.object({

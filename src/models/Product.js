@@ -17,6 +17,19 @@ const ProductSchema = new Schema(
     specs: { type: Map, of: String },
     rating: { type: Number, min: 0, max: 5, default: 0 },
     category: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
+    scores: {
+      performance: { type: Number, default: 85 },
+      value: { type: Number, default: 80 },
+      build: { type: Number, default: 90 },
+      features: { type: Number, default: 85 },
+      design: { type: Number, default: 88 }
+    },
+    flashDeal: {
+      active: { type: Boolean, default: false },
+      headline: { type: String, default: "" },
+      code: { type: String, default: "" },
+      expiresAt: { type: Date }
+    }
   },
   { timestamps: true }
 );

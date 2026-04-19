@@ -2,8 +2,13 @@
 
 import Image from "next/image";
 import AffiliateButton from "./AffiliateButton";
+import CommunityReview from "./CommunityReview";
 import { useComparison } from "@/context/ComparisonContext";
 import { BarChart2, Check, Award, ShieldCheck } from "lucide-react";
+import PerformanceRadar from "./PerformanceRadar";
+import { getPlaceholder } from "@/lib/placeholders";
+import PriceDropButton from "./PriceDropButton";
+import FlashDealBanner from "./FlashDealBanner";
 
 export default function StandaloneProductCard({ product, postSlug, badge }) {
   const { selectedIds, toggleProduct } = useComparison();
@@ -13,6 +18,13 @@ export default function StandaloneProductCard({ product, postSlug, badge }) {
 
   return (
     <div className="my-12 reveal-up">
+      {product.flashDeal && product.flashDeal.active && (
+         <FlashDealBanner 
+           headline={product.flashDeal.headline}
+           code={product.flashDeal.code}
+           expiresAt={product.flashDeal.expiresAt}
+         />
+      )}
       <div className="group relative glass-premium rounded-[2.5rem] border-white/5 p-8 md:p-10 shadow-premium hover:border-primary-500/30 transition-all duration-500 hover-lift">
         {/* Award Badge */}
         {badge && (
@@ -21,15 +33,17 @@ export default function StandaloneProductCard({ product, postSlug, badge }) {
           </div>
         )}
 
-        <div className="flex flex-col md:flex-row gap-10 items-center">
+        <div className="flex flex-col lg:flex-row gap-10 items-center">
           {/* Product Image Section */}
-          <div className="w-full md:w-2/5 aspect-square relative bg-white rounded-[2rem] p-10 shadow-[inset_0_0_40px_rgba(0,0,0,0.05)] group-hover:shadow-none transition-all duration-500">
+          <div className="w-full lg:w-2/5 aspect-square relative bg-white rounded-[2rem] p-10 shadow-[inset_0_0_40px_rgba(0,0,0,0.05)] group-hover:shadow-none transition-all duration-500">
             <Image
               src={product.image}
               alt={product.title}
               fill
               className="object-contain p-4 group-hover:scale-110 transition-transform duration-700"
               sizes="(max-width: 768px) 100vw, 30vw"
+              placeholder="blur"
+              blurDataURL={getPlaceholder(400, 400)}
             />
             
             {/* Compare Toggle */}
@@ -62,31 +76,37 @@ export default function StandaloneProductCard({ product, postSlug, badge }) {
               {product.title}
             </h3>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
-              {product.pros && product.pros.length > 0 && (
-                <ul className="space-y-2">
-                  {product.pros.slice(0, 3).map((p, i) => (
-                    <li key={i} className="flex items-start text-sm font-medium text-gray-400">
-                      <div className="w-5 h-5 rounded-full bg-green-500/10 flex items-center justify-center mr-3 mt-0.5 shrink-0">
-                         <Check className="w-3 h-3 text-green-500" />
-                      </div>
-                      {p}
-                    </li>
-                  ))}
-                </ul>
-              )}
-              {product.cons && product.cons.length > 0 && (
-                <ul className="space-y-2 opacity-50">
-                  {product.cons.slice(0, 3).map((c, i) => (
-                    <li key={i} className="flex items-start text-sm font-medium text-gray-500">
-                      <div className="w-5 h-5 rounded-full bg-gray-800 flex items-center justify-center mr-3 mt-0.5 shrink-0">
-                         <span className="text-[10px]">✕</span>
-                      </div>
-                      {c}
-                    </li>
-                  ))}
-                </ul>
-              )}
+            <div className="flex flex-col xl:flex-row gap-8 mb-10">
+              <div className="flex-1 space-y-6">
+                {product.pros && product.pros.length > 0 && (
+                  <ul className="space-y-3">
+                    {product.pros.slice(0, 3).map((p, i) => (
+                      <li key={i} className="flex items-start text-sm font-bold text-gray-300">
+                        <div className="w-5 h-5 rounded-full bg-green-500/10 flex items-center justify-center mr-3 mt-0.5 shrink-0">
+                           <Check className="w-3 h-3 text-green-500" />
+                        </div>
+                        {p}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {product.cons && product.cons.length > 0 && (
+                  <ul className="space-y-3 opacity-60">
+                    {product.cons.slice(0, 3).map((c, i) => (
+                      <li key={i} className="flex items-start text-sm font-bold text-gray-400">
+                        <div className="w-5 h-5 rounded-full bg-red-500/10 flex items-center justify-center mr-3 mt-0.5 shrink-0">
+                           <span className="text-[10px] text-red-500">✕</span>
+                        </div>
+                        {c}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+              
+              <div className="xl:w-[280px] shrink-0">
+                <PerformanceRadar scores={product.scores} />
+              </div>
             </div>
 
             <div className="flex flex-wrap gap-4 pt-8 border-t border-white/5">
@@ -109,8 +129,13 @@ export default function StandaloneProductCard({ product, postSlug, badge }) {
                   className="px-8 py-4 text-sm font-black rounded-2xl shadow-glow"
                 />
               )}
+              <div className="w-full mt-2">
+                <PriceDropButton productId={product._id?.toString()} />
+              </div>
             </div>
           </div>
+
+          <CommunityReview productId={product._id.toString()} />
         </div>
       </div>
     </div>

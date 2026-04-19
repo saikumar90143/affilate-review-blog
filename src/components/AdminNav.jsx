@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, FileText, ShoppingBag, Settings, FolderTree, Menu, X, Bot } from "lucide-react";
+import { LayoutDashboard, FileText, ShoppingBag, Settings, FolderTree, Menu, X, Bot, Activity } from "lucide-react";
 import Link from "next/link";
 import LogoutButton from "@/components/LogoutButton";
 
@@ -12,6 +12,7 @@ const navLinks = [
   { href: "/admin/blogs",      label: "AI Blogs",    icon: Bot              },
   { href: "/admin/ai-generator", label: "AI Generator", icon: Bot             },
   { href: "/admin/products",   label: "Products",    icon: ShoppingBag      },
+  { href: "/admin/tracking",   label: "Analytics",   icon: Activity         },
   { href: "/admin/settings",   label: "Settings",    icon: Settings         },
 ];
 

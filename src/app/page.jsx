@@ -24,31 +24,53 @@ export default async function Home() {
 
   try {
     await connectToDatabase();
+    console.log("[Home] Connected to database");
     
+    // Use individual try-catch blocks or localized error handling to prevent one failure from hiding all posts
+    const fetchPosts = Post.find({ isPublished: { $ne: false } }).sort({ createdAt: -1 }).limit(3).populate('category').lean()
+      .catch(e => { console.error("[Home] Posts fetch error:", e); return []; });
+      
+    const fetchProducts = Product.find({ rating: { $gte: 4.8 } }).sort({ rating: -1 }).limit(4).lean()
+      .catch(e => { console.error("[Home] Products fetch error:", e); return []; });
+      
+    const fetchCategories = Category.find({}).lean()
+      .catch(e => { console.error("[Home] Categories fetch error:", e); return []; });
+      
+    const fetchTotalPosts = Post.countDocuments({ isPublished: { $ne: false } })
+      .catch(e => { console.error("[Home] Count posts error:", e); return 0; });
+      
+    const fetchTotalProducts = Product.countDocuments()
+      .catch(e => { console.error("[Home] Count products error:", e); return 0; });
+      
+    const fetchTotalClicks = Click.countDocuments()
+      .catch(e => { console.error("[Home] Count clicks error:", e); return 0; });
+
     let [posts, products, categories, totalPosts, totalProducts, totalClicks] = await Promise.all([
-      Post.find({ isPublished: true }).sort({ createdAt: -1 }).limit(3).populate('category').lean(),
-      Product.find({ rating: { $gte: 4.8 } }).sort({ rating: -1 }).limit(4).lean(),
-      Category.find({}).lean(),
-      Post.countDocuments({ isPublished: true }),
-      Product.countDocuments(),
-      Click.countDocuments()
+      fetchPosts, fetchProducts, fetchCategories, fetchTotalPosts, fetchTotalProducts, fetchTotalClicks
     ]);
 
     posts = JSON.parse(JSON.stringify(posts));
     products = JSON.parse(JSON.stringify(products));
     categories = JSON.parse(JSON.stringify(categories));
 
+    console.log(`[Home] Successfully fetched ${posts.length} posts and ${products.length} products`);
+
     latestPosts = posts;
     topProducts = products;
     
     allCategories = await Promise.all(categories.map(async (cat) => {
-      const count = await Post.countDocuments({ category: cat._id, isPublished: true });
-      return { ...cat, count };
+      try {
+        const count = await Post.countDocuments({ category: cat._id, isPublished: { $ne: false } });
+        return { ...cat, count };
+      } catch (e) {
+        return { ...cat, count: 0 };
+      }
     }));
 
     stats = { posts: totalPosts, products: totalProducts, clicks: totalClicks };
-    spotlightProduct = products[0]; 
+    spotlightProduct = products[0] || null; 
   } catch (error) {
+    console.error("[Home] Critical Database Error:", error);
     dbError = true;
   }
 
@@ -62,6 +84,7 @@ export default async function Home() {
             src="/assets/hero_banner.png" 
             alt="Hero" 
             fill 
+            sizes="100vw"
             className="object-cover opacity-20 mix-blend-screen scale-110 blur-[2px]"
             priority
           />
@@ -131,7 +154,7 @@ export default async function Home() {
                         src={getValidImage(spotlightProduct.image)} 
                         alt={spotlightProduct.title} 
                         fill 
-                        sizes="(max-width: 768px) 100vw, 50vw"
+                        sizes="(max-width: 1024px) 100vw, 500px"
                         className="object-contain p-8 group-hover:scale-110 transition-transform duration-700" 
                       />
                       <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-gray-100/50 to-transparent"></div>
@@ -237,7 +260,7 @@ export default async function Home() {
                          src={getValidImage(latestPosts[0].featuredImage)} 
                          alt={latestPosts[0].title} 
                          fill 
-                         sizes="(max-width: 1024px) 100vw, 60vw"
+                         sizes="(max-width: 1024px) 100vw, 800px"
                          className="object-cover group-hover:scale-105 transition-transform duration-[2s]"
                        />
                        <div className="absolute inset-0 bg-gradient-to-t from-dark-bg/90 via-dark-bg/20 to-transparent"></div>

@@ -53,7 +53,14 @@ export default async function ProductReview({ params }) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
           {/* Image */}
           <div className="bg-white p-8 p-12 rounded-2xl border border-border overflow-hidden sticky top-24 shadow-2xl relative h-96 flex items-center justify-center">
-             <Image src={product.image} alt={product.title} fill className="object-contain p-8" priority />
+             <Image 
+               src={product.image} 
+               alt={product.title} 
+               fill 
+               sizes="(max-width: 768px) 100vw, 500px"
+               className="object-contain p-8" 
+               priority 
+             />
           </div>
 
           {/* Details */}

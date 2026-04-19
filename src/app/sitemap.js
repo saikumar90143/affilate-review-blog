@@ -8,7 +8,7 @@ export default async function sitemap() {
   await connectToDatabase();
 
   // Fetch all published posts
-  const posts = await Post.find({ isPublished: true }).select("slug updatedAt");
+  const posts = await Post.find({ isPublished: { $ne: false } }).select("slug updatedAt");
   const postEntries = posts.map((post) => ({
     url: `${baseUrl}/blog/${post.slug}`,
     lastModified: post.updatedAt,

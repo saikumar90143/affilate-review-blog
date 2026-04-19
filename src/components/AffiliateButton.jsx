@@ -54,17 +54,18 @@ export default function AffiliateButton({ url, platform, text, productId, postSl
       }
     };
 
-    return configs[target] || configs["Default"];
+    return { ...configs[target] || configs["Default"], platformName: target };
   };
 
   const info = getPlatformInfo();
 
+  const geoUrl = `/api/go?url=${encodeURIComponent(url)}&productId=${productId || ''}&platform=${encodeURIComponent(info.platformName)}&postSlug=${encodeURIComponent(postSlug || '')}`;
+
   return (
     <a 
-      href={url} 
+      href={geoUrl} 
       target="_blank" 
       rel="noopener noreferrer"
-      onClick={handleClick}
       className={`inline-flex items-center justify-center px-5 py-2.5 rounded-xl font-bold transition-all hover:scale-105 shadow-lg ${info.bg} ${info.text} ${className}`}
     >
       {info.icon}

@@ -16,7 +16,13 @@ export default function AboutPage() {
 
         <div className="bg-dark-card border border-border p-8 rounded-2xl mb-12 flex flex-col md:flex-row gap-8 items-center">
            <div className="w-full md:w-1/2 relative h-64 rounded-xl overflow-hidden shadow-2xl">
-              <Image src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=1000" alt="Team working" fill className="object-cover" />
+              <Image 
+                src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=1000" 
+                alt="Team working" 
+                fill 
+                sizes="(max-width: 768px) 100vw, 500px"
+                className="object-cover" 
+              />
            </div>
            <div className="w-full md:w-1/2 space-y-4">
               <h2 className="text-2xl font-bold">Our Mission</h2>

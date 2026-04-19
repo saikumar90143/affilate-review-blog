@@ -45,7 +45,13 @@ export default async function ComparisonPage({ searchParams }) {
                   {products.map((p, i) => (
                     <th key={p._id.toString()} className="p-4 font-bold text-center w-1/5">
                       <div className="relative w-full h-24 mb-4 bg-white rounded flex items-center justify-center p-2">
-                        <Image src={p.image} alt={p.title} fill className="object-contain" />
+                        <Image 
+                          src={p.image} 
+                          alt={p.title} 
+                          fill 
+                          sizes="150px"
+                          className="object-contain" 
+                        />
                       </div>
                       <div className="text-lg mb-2 truncate" title={p.title}>{p.title}</div>
                       {i === 0 && <span className="text-xs bg-primary-600 text-white px-2 py-1 rounded-full uppercase tracking-wider block w-24 mx-auto">Top Pick</span>}

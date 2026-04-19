@@ -1,6 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { format } from "date-fns";
+import TableOfContents from "@/components/TableOfContents";
+import QuickConvertBar from "@/components/QuickConvertBar";
+import { getPlaceholder } from "@/lib/placeholders";
 
 const AdSensePlaceholder = ({ position }) => (
   <div className="w-full bg-gray-900 border border-gray-800 rounded-xl py-8 my-8 flex flex-col items-center justify-center relative overflow-hidden group">
@@ -12,7 +15,16 @@ const AdSensePlaceholder = ({ position }) => (
   </div>
 );
 
-export default function AIBlogPostLayout({ blog, relatedPosts }) {
+export default function AIBlogPostLayout({ blog, relatedPosts, relatedProducts }) {
+  const injectHeadingIds = (html) => {
+    if (!html) return '';
+    return html.replace(/<(h[23])>(.*?)<\/\1>/g, (match, tag, text) => {
+      const id = text.toLowerCase().trim().replace(/[^\w\s-]/g, "").replace(/[\s_-]+/g, "-");
+      return `<${tag} id="${id}">${text}</${tag}>`;
+    });
+  };
+  const contentWithIds = injectHeadingIds(blog.content);
+
   return (
     <article className="pt-28 pb-16 bg-[#050508] min-h-screen relative overflow-x-hidden bg-premium-mesh">
       {/* Background Glow */}
@@ -54,8 +66,11 @@ export default function AIBlogPostLayout({ blog, relatedPosts }) {
                   src={blog.featuredImage} 
                   alt={blog.title}
                   fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 1000px"
                   className="object-cover group-hover:scale-105 transition-transform duration-[2s] ease-out opacity-80"
                   priority
+                  placeholder="blur"
+                  blurDataURL={getPlaceholder(1000, 600)}
                 />
                 <div className="absolute inset-0 bg-gradient-to-tr from-black/20 to-transparent pointer-events-none" />
                 <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#050508] to-transparent pointer-events-none" />
@@ -72,7 +87,7 @@ export default function AIBlogPostLayout({ blog, relatedPosts }) {
             prose-a:text-primary-400 prose-a:no-underline hover:prose-a:text-primary-300 hover:prose-a:underline
             prose-ul:text-gray-300 prose-li:my-2
             prose-strong:text-white prose-strong:font-bold overflow-x-hidden"
-            dangerouslySetInnerHTML={{ __html: blog.content }}
+            dangerouslySetInnerHTML={{ __html: contentWithIds }}
           />
 
           <AdSensePlaceholder position="End of Article" />
@@ -80,6 +95,7 @@ export default function AIBlogPostLayout({ blog, relatedPosts }) {
 
         <aside className="lg:w-80 shrink-0 space-y-8">
           <div className="sticky top-28 space-y-8">
+            <TableOfContents htmlContent={contentWithIds} />
             <AdSensePlaceholder position="Sidebar Display" />
             
             {relatedPosts && relatedPosts.length > 0 && (
@@ -94,7 +110,15 @@ export default function AIBlogPostLayout({ blog, relatedPosts }) {
                     <Link key={post._id.toString()} href={`/blog/${post.slug}`} className="group/item flex gap-5 items-center">
                       {post.featuredImage && (
                         <div className="relative w-[72px] h-[72px] rounded-2xl overflow-hidden shrink-0 border border-white/10 bg-[#050508]">
-                          <Image src={post.featuredImage} alt={post.title} fill className="object-cover group-hover/item:scale-110 transition-transform duration-500" />
+                          <Image 
+                            src={post.featuredImage} 
+                            alt={post.title} 
+                            fill 
+                            sizes="72px"
+                            className="object-cover group-hover/item:scale-110 transition-transform duration-500" 
+                            placeholder="blur"
+                            blurDataURL={getPlaceholder(72, 72)}
+                          />
                         </div>
                       )}
                       <div>
@@ -112,6 +136,9 @@ export default function AIBlogPostLayout({ blog, relatedPosts }) {
         </aside>
         </div>
       </div>
+      {relatedProducts && relatedProducts.length > 0 && (
+        <QuickConvertBar product={relatedProducts[0]} postSlug={blog.slug} />
+      )}
     </article>
   );
 }

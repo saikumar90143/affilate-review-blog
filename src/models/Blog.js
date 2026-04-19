@@ -11,6 +11,10 @@ const BlogSchema = new Schema(
     metaTitle: { type: String },
     metaDescription: { type: String },
     ogImage: { type: String },
+    faqs: [{
+      question: { type: String },
+      answer: { type: String },
+    }],
     status: { type: String, enum: ['draft', 'published'], default: 'draft' },
   },
   { timestamps: true }

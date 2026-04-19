@@ -13,6 +13,11 @@ const PostSchema = new Schema(
     isPublished: { type: Boolean, default: true },
     metaTitle: { type: String },
     metaDescription: { type: String },
+    keyTakeaways: [{ type: String }],
+    faqs: [{
+      question: { type: String },
+      answer: { type: String },
+    }],
   },
   { timestamps: true }
 );

@@ -9,13 +9,20 @@ export default function AdSlot({ className = "", responsive = true }) {
   const adSlotId = process.env.NEXT_PUBLIC_ADSENSE_SLOT_ID;
 
   useEffect(() => {
-    if (adClient && typeof window !== "undefined") {
+    if (!adClient || typeof window === "undefined") return;
+
+    // Use a small delay to ensure the layout has settled and the element has width
+    const timer = setTimeout(() => {
       try {
-        (window.adsbygoogle = window.adsbygoogle || []).push({});
+        if (adRef.current && adRef.current.offsetWidth > 0) {
+          (window.adsbygoogle = window.adsbygoogle || []).push({});
+        }
       } catch (e) {
-        console.error("AdSense error", e);
+        console.error("AdSense error:", e);
       }
-    }
+    }, 500);
+
+    return () => clearTimeout(timer);
   }, [adClient]);
 
   if (!adClient) {

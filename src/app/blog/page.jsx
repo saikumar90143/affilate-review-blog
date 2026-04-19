@@ -25,7 +25,7 @@ export default async function BlogList({ searchParams }) {
   const resolvedParams = await searchParams;
   const activeCategory = resolvedParams?.category;
 
-  let postFilter = { isPublished: true };
+  let postFilter = { isPublished: { $ne: false } };
 
   if (activeCategory) {
     const categoryDoc = await Category.findOne({ slug: activeCategory });
@@ -33,11 +33,21 @@ export default async function BlogList({ searchParams }) {
       postFilter.category = categoryDoc._id;
     }
   }
-  
-  const [posts, categories] = await Promise.all([
-    Post.find(postFilter).sort({ createdAt: -1 }).populate('category').lean(),
-    Category.find({}).sort({ name: 1 })
-  ]);
+
+  let posts = [];
+  let categories = [];
+
+  try {
+    const fetchPosts = Post.find(postFilter).sort({ createdAt: -1 }).populate('category').lean()
+      .catch(e => { console.error("[Blog] Posts fetch error:", e); return []; });
+    const fetchCategories = Category.find({}).sort({ name: 1 }).lean()
+      .catch(e => { console.error("[Blog] Categories fetch error:", e); return []; });
+
+    [posts, categories] = await Promise.all([fetchPosts, fetchCategories]);
+    console.log(`[Blog] Successfully fetched ${posts.length} posts`);
+  } catch (error) {
+    console.error("[Blog] Critical error fetching data:", error);
+  }
 
   const activeTabStyle = "px-6 py-2.5 rounded-full border border-primary-500 bg-primary-600/10 text-primary-400 transition-colors text-xs uppercase tracking-[0.2em] font-black whitespace-nowrap shadow-[0_0_15px_rgba(59,130,246,0.15)]";
   const inactiveTabStyle = "px-6 py-2.5 rounded-full border border-white/5 glass hover:bg-white/10 hover:text-white transition-colors text-xs uppercase tracking-[0.2em] font-semibold whitespace-nowrap text-gray-400";
@@ -75,7 +85,14 @@ export default async function BlogList({ searchParams }) {
             <Link href={`/blog/${featuredPost.slug}`} className="group block relative rounded-[3rem] overflow-hidden border border-white/10 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] hover:shadow-[0_30px_80px_-15px_rgba(59,130,246,0.25)] transition-all duration-700 hover:-translate-y-2">
                <div className="relative aspect-[4/3] sm:aspect-[21/9] max-h-[650px] w-full bg-[#050508] overflow-hidden">
                  {featuredPost.featuredImage && (
-                   <Image src={featuredPost.featuredImage} alt={featuredPost.title} fill className="object-cover group-hover:scale-105 transition-transform duration-[2s] ease-out opacity-60 group-hover:opacity-80" priority />
+                   <Image 
+                     src={featuredPost.featuredImage} 
+                     alt={featuredPost.title} 
+                     fill 
+                     sizes="(max-width: 768px) 100vw, (max-width: 1280px) 1200px, 1400px"
+                     className="object-cover group-hover:scale-105 transition-transform duration-[2s] ease-out opacity-60 group-hover:opacity-80" 
+                     priority 
+                   />
                  )}
                  <div className="absolute inset-0 bg-gradient-to-t from-[#0b0b12] via-[#0b0b12]/60 to-transparent" />
                  <div className="absolute inset-0 bg-gradient-to-r from-[#0b0b12]/80 via-transparent to-transparent" />
@@ -113,7 +130,13 @@ export default async function BlogList({ searchParams }) {
                   {post.category?.name || 'General'}
                 </div>
                 {post.featuredImage ? (
-                  <Image src={post.featuredImage} alt={post.title} fill className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out" />
+                  <Image 
+                    src={post.featuredImage} 
+                    alt={post.title} 
+                    fill 
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out" 
+                  />
                 ) : (
                   <div className="absolute inset-0 bg-[#050508]" />
                 )}

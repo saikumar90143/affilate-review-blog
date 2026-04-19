@@ -50,8 +50,14 @@ export default async function CategoryPage({ params }) {
              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                {products.map(prod => (
                  <div key={prod._id.toString()} className="bg-dark-card rounded-2xl overflow-hidden border border-border">
-                    <div className="relative h-48 bg-white p-4">
-                      <Image src={prod.image} alt={prod.title} fill className="object-contain" />
+                    <div className="relative h-48 bg-white p-4 text-center">
+                      <Image 
+                        src={prod.image} 
+                        alt={prod.title} 
+                        fill 
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 33vw, 300px"
+                        className="object-contain p-4" 
+                      />
                     </div>
                     <div className="p-6">
                       <div className="flex justify-between items-start mb-2">
@@ -88,7 +94,13 @@ export default async function CategoryPage({ params }) {
                  <div key={post._id.toString()} className="bg-dark-card border border-border rounded-2xl overflow-hidden group">
                    <div className="relative h-48 w-full bg-gray-800">
                      {post.featuredImage && (
-                       <Image src={post.featuredImage} alt={post.title} fill className="object-cover group-hover:scale-105 transition-transform" />
+                       <Image 
+                        src={post.featuredImage} 
+                        alt={post.title} 
+                        fill 
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 400px"
+                        className="object-cover group-hover:scale-105 transition-transform" 
+                       />
                      )}
                    </div>
                    <div className="p-6">
