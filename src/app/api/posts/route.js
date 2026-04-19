@@ -77,7 +77,7 @@ export async function POST(req) {
     const isEdit = _id ? true : false;
 
     if (isEdit) {
-       post = await Post.findByIdAndUpdate(_id, saveData, { new: true }).lean();
+       post = await Post.findByIdAndUpdate(_id, saveData, { returnDocument: 'after' }).lean();
        console.log("[POST /api/posts] Updated post:", post?._id);
     } else {
        post = await Post.create(saveData);

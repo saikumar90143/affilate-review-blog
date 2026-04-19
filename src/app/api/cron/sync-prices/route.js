@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import connectToDatabase from "@/lib/mongodb";
 import Product from "@/models/Product";
+import PriceAlert from "@/models/PriceAlert";
+import { sendPriceAlertEmail } from "@/lib/email";
 
 // Secure endpoint (if triggered manually, needs secret. Vercel cron injects standard headers we could check)
 export async function GET(req) {
@@ -29,10 +31,23 @@ export async function GET(req) {
       const currentPrice = product.price || 199.99;
       // Fluctuate randomly between -5% and +5%
       const fluctuation = currentPrice * (Math.random() * 0.1 - 0.05);
-      const newPrice = Math.max(10, currentPrice + fluctuation);
+      const newPrice = Math.max(10, currentPrice - 5); // FORCE A DROP FOR DEMO TEST
+      
+      const priceDropped = newPrice < currentPrice;
       
       product.price = parseFloat(newPrice.toFixed(2));
       await product.save();
+
+      // If price dropped, notify watchers
+      if (priceDropped) {
+        const alerts = await PriceAlert.find({ productId: product._id, isNotified: false });
+        for (const alert of alerts) {
+          await sendPriceAlertEmail(alert.email, product.title, product.price);
+          alert.isNotified = true;
+          await alert.save();
+        }
+      }
+
       updatedCount++;
     }
 

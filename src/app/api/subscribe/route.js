@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import connectToDatabase from "@/lib/mongodb";
 import Subscriber from "@/models/Subscriber";
+import { sendWelcomeEmail } from "@/lib/email";
 
 export async function POST(req) {
   try {
@@ -16,8 +17,11 @@ export async function POST(req) {
     await Subscriber.findOneAndUpdate(
       { email },
       { $setOnInsert: { email, source: source || "exit-intent" } },
-      { upsert: true, new: true }
+      { upsert: true, returnDocument: 'after' }
     );
+    
+    // Send automated welcome email
+    await sendWelcomeEmail(email);
 
     return NextResponse.json({ success: true });
   } catch (error) {

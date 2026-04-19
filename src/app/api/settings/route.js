@@ -28,7 +28,7 @@ export async function PUT(req) {
     await connectToDatabase();
     
     // Update the single settings document
-    const settings = await Settings.findOneAndUpdate({}, data, { new: true, upsert: true });
+    const settings = await Settings.findOneAndUpdate({}, data, { returnDocument: 'after', upsert: true });
 
     return NextResponse.json(settings);
   } catch (error) {

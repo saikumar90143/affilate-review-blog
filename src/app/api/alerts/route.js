@@ -15,7 +15,7 @@ export async function POST(req) {
     await PriceAlert.findOneAndUpdate(
       { email, productId },
       { $setOnInsert: { email, productId, isNotified: false } },
-      { upsert: true, new: true }
+      { upsert: true, returnDocument: 'after' }
     );
 
     return NextResponse.json({ success: true });

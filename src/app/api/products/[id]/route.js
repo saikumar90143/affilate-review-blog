@@ -30,7 +30,7 @@ export async function PUT(req, { params }) {
     const validated = ProductSchema.parse(body);
 
     await connectToDatabase();
-    const product = await Product.findByIdAndUpdate(id, validated, { new: true });
+    const product = await Product.findByIdAndUpdate(id, validated, { returnDocument: 'after' });
     if (!product) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
     // Invalidate caches

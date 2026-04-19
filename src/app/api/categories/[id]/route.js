@@ -29,7 +29,7 @@ export async function PUT(req, { params }) {
     const validated = CategorySchema.parse(body);
 
     await connectToDatabase();
-    const cat = await Category.findByIdAndUpdate(id, validated, { new: true });
+    const cat = await Category.findByIdAndUpdate(id, validated, { returnDocument: 'after' });
     if (!cat) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
     // Invalidate caches

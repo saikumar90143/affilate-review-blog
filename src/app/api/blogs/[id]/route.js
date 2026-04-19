@@ -13,7 +13,7 @@ export async function PUT(request, { params }) {
     await connectDB();
     
     const data = await request.json();
-    const updatedBlog = await Blog.findByIdAndUpdate(id, data, { new: true });
+    const updatedBlog = await Blog.findByIdAndUpdate(id, data, { returnDocument: 'after' });
     
     if (!updatedBlog) {
       return NextResponse.json({ error: "Blog not found" }, { status: 404 });

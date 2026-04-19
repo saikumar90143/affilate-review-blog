@@ -35,7 +35,7 @@ export async function PUT(req, { params }) {
     validated.content = sanitize(validated.content);
 
     await connectToDatabase();
-    const post = await Post.findByIdAndUpdate(id, validated, { new: true }).populate("category").lean();
+    const post = await Post.findByIdAndUpdate(id, validated, { returnDocument: 'after' }).populate("category").lean();
     if (!post) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
     // Clear caches
