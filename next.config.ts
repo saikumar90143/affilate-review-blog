@@ -18,6 +18,7 @@ const nextConfig: NextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === "production",
   },
+  serverExternalPackages: ["jsdom", "cheerio", "sanitize-html"],
 };
 
 export default nextConfig;

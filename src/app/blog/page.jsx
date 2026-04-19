@@ -10,7 +10,7 @@ export const metadata = {
   description: "Read our latest articles, guides, and tips.",
 };
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 function calculateReadingTime(content) {
   if (!content) return "1 min read";
