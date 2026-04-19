@@ -12,16 +12,25 @@ export async function GET(req) {
     const { searchParams } = new URL(req.url);
     const category = searchParams.get("category");
 
-    await connectToDatabase();
+    const mongoose = await connectToDatabase();
     
+    // DEBUG LOG: This will show up in Vercel Logs
+    console.log(`[GET /api/products] Connected to DB: "${mongoose.connection.name}"`);
+
     const filter = category ? { category } : {};
     const products = await Product.find(filter)
       .sort({ createdAt: -1 })
       .populate('category', 'name slug');
 
+    console.log(`[GET /api/products] Successfully fetched ${products.length} products`);
     return NextResponse.json(products);
   } catch (error) {
-    return NextResponse.json({ error: "Failed to fetch products" }, { status: 500 });
+    console.error("[GET /api/products] CRITICAL ERROR:", error);
+    return NextResponse.json({ 
+      error: "Failed to fetch products", 
+      message: error.message,
+      dbName: (await connectToDatabase()).connection?.name || "unconnected"
+    }, { status: 500 });
   }
 }
 
