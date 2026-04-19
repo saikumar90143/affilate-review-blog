@@ -27,11 +27,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className="dark" data-scroll-behavior="smooth">
       <body className={`${outfit.variable} font-sans min-h-screen flex flex-col`}>
-        {adClient && (
-          <Script
+        {adClient && process.env.NODE_ENV === 'production' && (
+          <script
             async
             src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adClient}`}
-            strategy="afterInteractive"
             crossOrigin="anonymous"
           />
         )}
