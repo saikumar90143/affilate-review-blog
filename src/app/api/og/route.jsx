@@ -2,7 +2,6 @@ import { ImageResponse } from 'next/og';
 import connectToDatabase from '@/lib/mongodb';
 import Product from '@/models/Product';
 
-export const runtime = 'edge';
 
 // Font configuration
 // Automatically fetching Inter font from Google
