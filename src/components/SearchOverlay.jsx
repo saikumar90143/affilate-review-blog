@@ -41,9 +41,14 @@ export default function SearchOverlay({ isOpen, onClose }) {
     const timer = setTimeout(async () => {
       setLoading(true);
       try {
-        const res = await fetch(`/api/posts?search=${encodeURIComponent(query)}&limit=5`);
+        const res = await fetch(`/api/search?q=${encodeURIComponent(query)}&limit=5`);
         const data = await res.json();
-        setResults(data.posts || []);
+        // Combine results for quick view
+        const combined = [
+          ...(data.products || []).map(p => ({ ...p, type: 'product' })),
+          ...(data.posts || []).map(p => ({ ...p, type: 'post' }))
+        ].slice(0, 5);
+        setResults(combined);
       } catch (error) {
         console.error("Quick search error:", error);
       } finally {
@@ -101,22 +106,30 @@ export default function SearchOverlay({ isOpen, onClose }) {
             {!loading && results.length > 0 && (
               <div className="space-y-4">
                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary-500 mb-6 px-4">Instant Matches</p>
-                {results.map((post) => (
-                  <Link key={post._id} href={`/blog/${post.slug}`} onClick={onClose} className="flex items-center gap-4 p-4 rounded-3xl hover:bg-white/5 border border-transparent hover:border-white/5 transition-all group">
-                    <div className="relative w-16 h-16 rounded-2xl overflow-hidden bg-gray-900 shrink-0 border border-white/5">
-                      {post.featuredImage && (
-                        <Image 
-                          src={post.featuredImage} 
-                          alt={post.title} 
-                          fill 
-                          sizes="64px"
-                          className="object-cover group-hover:scale-110 transition-transform duration-500" 
-                        />
-                      )}
+                {results.map((item) => (
+                  <Link 
+                    key={item._id} 
+                    href={item.type === 'product' ? `/reviews/${item.slug}` : `/blog/${item.slug}`} 
+                    onClick={onClose} 
+                    className="flex items-center gap-4 p-4 rounded-3xl hover:bg-white/5 border border-transparent hover:border-white/5 transition-all group"
+                  >
+                    <div className="relative w-16 h-16 rounded-2xl overflow-hidden bg-white shrink-0 border border-white/5 p-2">
+                       <Image 
+                         src={item.type === 'product' ? item.image : (item.featuredImage || "/placeholder.png")} 
+                         alt={item.title} 
+                         fill 
+                         sizes="64px"
+                         className={item.type === 'product' ? "object-contain p-1 group-hover:scale-110 transition-transform duration-500" : "object-cover group-hover:scale-110 transition-transform duration-500"} 
+                       />
                     </div>
                     <div className="flex-1">
-                      <h4 className="font-bold text-white group-hover:text-primary-400 transition-colors line-clamp-1">{post.title}</h4>
-                      <p className="text-xs text-gray-500 line-clamp-1 mt-1 font-light">{post.excerpt}</p>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className={`text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded ${item.type === 'product' ? 'bg-primary-500/20 text-primary-400' : 'bg-cyan-500/20 text-cyan-400'}`}>
+                          {item.type === 'product' ? 'Gear' : 'Intel'}
+                        </span>
+                        <h4 className="font-bold text-white group-hover:text-primary-400 transition-colors line-clamp-1">{item.title}</h4>
+                      </div>
+                      <p className="text-[10px] text-gray-500 line-clamp-1 font-light">{item.excerpt || item.description || "Expert intelligence entry."}</p>
                     </div>
                     <ArrowRight className="w-5 h-5 text-gray-700 group-hover:text-primary-500 group-hover:translate-x-1 transition-all" />
                   </Link>

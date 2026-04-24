@@ -88,10 +88,10 @@ export default function ExitIntentPopup() {
           {!isSuccess ? (
             <>
               <h3 className="text-3xl font-black text-white tracking-tighter mb-4">
-                Wait! Access <span className="premium-gradient">Unfiltered Intel</span>
+                Claim Your <span className="premium-gradient">Free Tech Guide</span>
               </h3>
-              <p className="text-gray-400 font-light leading-relaxed mb-10">
-                Join 50k+ elite reviewers receiving weekly proprietary analysis, hidden gear deals, and exclusive tech archives.
+              <p className="text-gray-400 font-light leading-relaxed mb-6">
+                Get instant access to our <strong className="text-white">2026 Ultimate Tech Buying Guide PDF</strong>. Discover which gear to buy, and the overpriced traps you should avoid.
               </p>
 
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -106,9 +106,9 @@ export default function ExitIntentPopup() {
                 <button 
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-5 rounded-2x bg-primary-600 hover:bg-primary-500 text-white font-black text-[11px] uppercase tracking-[0.2em] transition-all shadow-glow hover:-translate-y-1 disabled:opacity-50"
+                  className="w-full py-5 rounded-2xl bg-primary-600 hover:bg-primary-500 text-white font-black text-[11px] uppercase tracking-[0.2em] transition-all shadow-glow hover:-translate-y-1 disabled:opacity-50"
                 >
-                  {isSubmitting ? "Securing Access..." : "Get Exclusive Intel"}
+                  {isSubmitting ? "Generating PDF..." : "Send Me The Guide"}
                 </button>
               </form>
 
@@ -122,8 +122,19 @@ export default function ExitIntentPopup() {
                <div className="w-20 h-20 rounded-full bg-green-500/20 border border-green-500/30 flex items-center justify-center mx-auto mb-8">
                   <ShieldCheck className="w-10 h-10 text-green-500" />
                </div>
-               <h3 className="text-3xl font-black text-white tracking-tighter mb-4">Access Granted</h3>
-               <p className="text-gray-400 font-light">Cross-referencing your credentials. Check your inbox for the first report.</p>
+               <h3 className="text-3xl font-black text-white tracking-tighter mb-4">You're In!</h3>
+               <p className="text-gray-400 font-light mb-8">Your email has been verified. Download your 2026 Buying Guide below.</p>
+               <a 
+                 href="#" 
+                 onClick={(e) => {
+                   e.preventDefault();
+                   alert("Downloading PDF...");
+                   setTimeout(handleDismiss, 1000);
+                 }}
+                 className="inline-flex items-center justify-center w-full py-5 rounded-2xl bg-white hover:bg-gray-100 text-black font-black text-[11px] uppercase tracking-[0.2em] transition-all shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:-translate-y-1"
+               >
+                 Download PDF Now
+               </a>
             </div>
           )}
         </div>

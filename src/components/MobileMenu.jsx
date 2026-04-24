@@ -7,9 +7,10 @@ export default function MobileMenu({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   const navItems = [
-    { label: "Home", href: "/" },
-    { label: "Blog", href: "/blog" },
-    { label: "Compare", href: "/comparison" },
+    { label: "Home",     href: "/" },
+    { label: "Blog",     href: "/blog" },
+    { label: "Products", href: "/products" },
+    { label: "Compare",  href: "/comparison" },
   ];
 
   return (

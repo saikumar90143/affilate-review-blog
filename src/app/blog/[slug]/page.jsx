@@ -27,6 +27,7 @@ import ExitIntentPopup from "@/components/ExitIntentPopup";
 import { autoLinkKeywords } from "@/lib/internalLinker";
 import { getPlaceholder } from "@/lib/placeholders";
 import AudioPlayer from "@/components/AudioPlayer";
+import NewsletterForm from "@/components/NewsletterForm";
 
 export const revalidate = 3600;
 
@@ -105,18 +106,20 @@ export default async function BlogPost({ params }) {
   settings = JSON.parse(JSON.stringify(settings));
 
   // Fetch related posts from the same category
-  const relatedContent = await Post.find({
+  const rawRelatedContent = await Post.find({
     category: post.category?._id,
     _id: { $ne: post._id },
     isPublished: true
-  }).limit(3);
+  }).limit(3).lean();
+  const relatedContent = JSON.parse(JSON.stringify(rawRelatedContent));
 
   // Fetch some related products randomly or by category to simulate embedded products if we want
   // Fetch related products for the comparison matrix (top rated in category)
-  const relatedProducts = await Product.find({ category: post.category?._id })
+  const rawRelatedProducts = await Product.find({ category: post.category?._id })
     .sort({ rating: -1 })
     .limit(4)
     .lean();
+  const relatedProducts = JSON.parse(JSON.stringify(rawRelatedProducts));
 
   const url = `${process.env.NEXT_PUBLIC_SITE_URL}/blog/${slug}`;
 
@@ -231,7 +234,7 @@ export default async function BlogPost({ params }) {
             <span className="hidden sm:inline w-1 h-1 rounded-full bg-gray-700"></span>
             <span className="text-primary-500">{calculateReadingTime(post.content)}</span>
           </div>
-          
+
           <div className="flex justify-center mt-8 mb-8">
             <AudioPlayer textToRead={post.excerpt || post.title + ". This is an elite review brought to you by Elite Reviews. " + post.content?.replace(/<[^>]*>?/gm, '').substring(0, 500)} />
           </div>
@@ -278,21 +281,21 @@ export default async function BlogPost({ params }) {
 
               {/* High-Impact Comparison Matrix */}
               {relatedProducts.length > 1 && (
-                <ComparisonMatrix 
-                  currentProduct={relatedProducts[0]} 
-                  rivals={relatedProducts.slice(1)} 
-                  postSlug={post.slug} 
+                <ComparisonMatrix
+                  currentProduct={relatedProducts[0]}
+                  rivals={relatedProducts.slice(1)}
+                  postSlug={post.slug}
                 />
               )}
               {await (async () => {
                 let content = injectHeadingIds(post.content);
-                
+
                 // Intelligent Internal Linking Engine mapping
                 const keywordsMap = relatedContent.map(rc => ({ keyword: rc.title, url: `/blog/${rc.slug}` }));
                 if (post.category?.name) {
                   keywordsMap.push({ keyword: post.category.name, url: `/blog?category=${post.category.slug}` });
                 }
-                
+
                 content = autoLinkKeywords(content, keywordsMap);
 
                 const shortcodeRegex = /\[product slug="([^"]+)"\]/g;
@@ -431,12 +434,7 @@ export default async function BlogPost({ params }) {
                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary-600/20 rounded-full blur-[40px] pointer-events-none group-hover:bg-primary-500/30 transition-colors duration-700" />
                 <h4 className="font-black text-2xl text-white mb-3 relative z-10 leading-tight">Elite Inner Circle</h4>
                 <p className="text-sm text-gray-400 mb-8 relative z-10 leading-relaxed font-light">Join 50k+ enthusiasts receiving our weekly unfiltered gear analysis.</p>
-                <form className="relative z-10 flex flex-col gap-4">
-                  <input type="email" placeholder="Email Address" required className="w-full bg-[#050508] border border-white/10 rounded-xl px-5 py-4 text-sm text-white focus:outline-none focus:border-primary-500 transition-colors shadow-inner" />
-                  <button type="button" className="w-full bg-primary-600 hover:bg-primary-500 text-white font-black text-[11px] uppercase tracking-widest py-4 rounded-xl transition-all shadow-glow hover:-translate-y-1">
-                    Secure Access
-                  </button>
-                </form>
+                <NewsletterForm source="sidebar" className="flex-col gap-4" inputClassName="py-4 rounded-xl" buttonClassName="py-4 rounded-xl text-[11px]" />
               </div>
 
               {/* Sidebar Related Reads */}

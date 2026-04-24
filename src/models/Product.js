@@ -29,7 +29,24 @@ const ProductSchema = new Schema(
       headline: { type: String, default: "" },
       code: { type: String, default: "" },
       expiresAt: { type: Date }
-    }
+    },
+    description: { type: String, default: "" },
+    faqs: [
+      {
+        question: { type: String, required: true },
+        answer: { type: String, required: true },
+      }
+    ],
+    helpful: {
+      yes: { type: Number, default: 0 },
+      no: { type: Number, default: 0 },
+    },
+    badge: { 
+      type: String, 
+      enum: ["editor_choice", "best_value", "top_rated", "budget_pick", ""],
+      default: "" 
+    },
+    isSponsored: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

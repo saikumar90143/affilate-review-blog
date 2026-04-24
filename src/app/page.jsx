@@ -9,6 +9,8 @@ import Link from "next/link";
 import AffiliateButton from "@/components/AffiliateButton";
 import TrustBanner from "@/components/TrustBanner";
 import AdSlot from "@/components/AdSlot";
+import NewsletterForm from "@/components/NewsletterForm";
+import GearMatchmaker from "@/components/GearMatchmaker";
 
 export const revalidate = 60;
 
@@ -18,6 +20,7 @@ export default async function Home() {
   let latestPosts = [];
   let topProducts = [];
   let allCategories = [];
+  let productsByCategory = {};
   let stats = { posts: 0, products: 0, clicks: 0 };
   let spotlightProduct = null;
   let dbError = false;
@@ -33,7 +36,7 @@ export default async function Home() {
     const fetchProducts = Product.find({ rating: { $gte: 4.8 } }).sort({ rating: -1 }).limit(4).lean()
       .catch(e => { console.error("[Home] Products fetch error:", e); return []; });
       
-    const fetchCategories = Category.find({}).lean()
+    const fetchCategories = Category.find().lean()
       .catch(e => { console.error("[Home] Categories fetch error:", e); return []; });
       
     const fetchTotalPosts = Post.countDocuments({ isPublished: { $ne: false } })
@@ -55,20 +58,29 @@ export default async function Home() {
 
     console.log(`[Home] Successfully fetched ${posts.length} posts and ${products.length} products`);
 
-    latestPosts = posts;
-    topProducts = products;
-    
-    allCategories = await Promise.all(categories.map(async (cat) => {
-      try {
-        const count = await Post.countDocuments({ category: cat._id, isPublished: { $ne: false } });
-        return { ...cat, count };
-      } catch (e) {
-        return { ...cat, count: 0 };
-      }
-    }));
-
     stats = { posts: totalPosts, products: totalProducts, clicks: totalClicks };
     spotlightProduct = products[0] || null; 
+    latestPosts = posts;
+    topProducts = products;
+
+    // Filter categories for the Matchmaker (Product categories)
+    const productCategories = categories.filter(c => 
+      (Array.isArray(c.for) && c.for.includes('product')) || 
+      c.for === 'product' || 
+      !c.for
+    );
+    allCategories = productCategories;
+
+    // Grouping products for the Matchmaker
+    const allProducts = await Product.find().lean();
+    productsByCategory = allProducts.reduce((acc, prod) => {
+      const catId = prod.category.toString();
+      if (!acc[catId]) acc[catId] = [];
+      acc[catId].push(JSON.parse(JSON.stringify(prod)));
+      return acc;
+    }, {});
+
+    allCategories = JSON.parse(JSON.stringify(allCategories));
   } catch (error) {
     console.error("[Home] Critical Database Error:", error);
     dbError = true;
@@ -195,44 +207,11 @@ export default async function Home() {
              <p className="text-gray-500 text-sm md:text-lg max-w-xl mx-auto font-light leading-relaxed">Select your domain and find the highest-performing gear curated by experts.</p>
           </div>
 
-          {/* Uniform Grid Layout */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-            {allCategories.map((cat, idx) => {
-               let Icon = Cpu;
-               if (cat.name.toLowerCase().includes('fit')) Icon = Dumbbell;
-               if (cat.name.toLowerCase().includes('farm') || cat.name.toLowerCase().includes('plant')) Icon = Sprout;
-               if (cat.name.toLowerCase().includes('pay') || cat.name.toLowerCase().includes('money')) Icon = Wallet;
-               if (cat.name.toLowerCase().includes('tech')) Icon = Smartphone;
-               
-               return (
-                 <Link 
-                   key={cat._id.toString()} 
-                   href={`/category/${cat.slug}`} 
-                   className="group relative overflow-hidden rounded-3xl md:rounded-[2.5rem] bg-[#0d0d12] border border-white/5 hover:border-primary-500/50 transition-all duration-500 reveal-up hover-lift aspect-square flex flex-col justify-end"
-                   style={{ transitionDelay: `${idx * 100}ms` }}
-                 >
-                    {/* Background Detail */}
-                    <div className="absolute top-0 right-0 p-4 md:p-8 opacity-5 group-hover:opacity-20 group-hover:scale-150 transition-all duration-700">
-                       <Icon className="w-16 h-16 md:w-32 md:h-32" />
-                    </div>
-
-                    <div className="relative p-5 md:p-10 flex flex-col justify-between h-full z-10">
-                       <div className="bg-white/5 p-2.5 md:p-4 rounded-xl md:rounded-2xl w-fit group-hover:bg-primary-600 transition-colors shrink-0">
-                          <Icon className="w-4 h-4 md:w-7 md:h-7" />
-                       </div>
-                       <div className="mt-auto">
-                          <h3 className="text-sm md:text-2xl font-black leading-tight">{cat.name}</h3>
-                          <p className="text-[8px] md:text-[10px] font-black text-gray-500 uppercase tracking-widest mt-1 md:mt-2 group-hover:text-primary-400 transition-colors line-clamp-1">
-                            {cat.count || 0} Professional Guides
-                          </p>
-                       </div>
-                    </div>
-                    
-                    {/* Hover Glow */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                 </Link>
-               )
-            })}
+          <div className="reveal-up">
+            <GearMatchmaker 
+              categories={allCategories} 
+              productsByCategory={productsByCategory} 
+            />
           </div>
         </div>
       </section>
@@ -385,17 +364,7 @@ export default async function Home() {
             <p className="text-base md:text-xl text-gray-400 mb-8 md:mb-12 max-w-lg mx-auto font-light leading-relaxed">
               We send the elite tech insights you actually need once a week. Join the club of 50k+ enthusiasts.
             </p>
-            <form className="flex flex-col md:flex-row gap-4 max-w-2xl mx-auto bg-black/40 p-2 rounded-[1.5rem] md:rounded-[2rem] border border-white/5">
-              <input 
-                type="email" 
-                placeholder="reader@elite.com" 
-                className="flex-1 px-6 py-4 md:px-8 md:py-5 rounded-xl md:rounded-2xl bg-transparent focus:outline-none text-base md:text-lg font-light placeholder:text-gray-700 text-center md:text-left" 
-                required
-              />
-              <button type="submit" className="px-6 py-4 md:px-10 md:py-5 bg-primary-600 hover:bg-primary-500 text-white font-black rounded-xl md:rounded-[1.5rem] transition-all shadow-glow transform active:scale-95 text-sm md:text-base tracking-[0.1em]">
-                Join Today
-              </button>
-            </form>
+            <NewsletterForm source="homepage" className="max-w-2xl mx-auto bg-black/40 p-2 rounded-[1.5rem] md:rounded-[2rem] border border-white/5" />
             <div className="mt-8 md:mt-10 flex flex-wrap justify-center gap-4 md:gap-6 opacity-40 md:opacity-30">
                <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest">No Ads</span>
                <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest hidden sm:inline">Expert Advice</span>

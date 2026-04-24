@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import FloatingComparisonBar from "@/components/FloatingComparisonBar";
 import BackToTop from "@/components/BackToTop";
 import ExitIntentPopup from "@/components/ExitIntentPopup";
+import MarqueeBanner from "@/components/MarqueeBanner";
 import { ComparisonProvider } from "@/context/ComparisonContext";
 
 const outfit = Outfit({ 
@@ -35,6 +36,11 @@ export default function RootLayout({ children }) {
           />
         )}
         <ComparisonProvider>
+          <MarqueeBanner messages={[
+            "⚡ Flash Deal: Sony WH-1000XM6 price drop detected", 
+            "🔥 Trending: Samsung Galaxy S24 Ultra ultimate breakdown", 
+            "⭐ Elite Pick: Apple Watch Ultra 2 review updated"
+          ]} />
           <Navbar />
           <main className="flex-1">{children}</main>
           <Footer />

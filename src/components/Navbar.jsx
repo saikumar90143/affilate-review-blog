@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { Zap, Menu, X, Search } from "lucide-react";
+import { Zap, Menu, X, Search, Bookmark } from "lucide-react";
 import MobileMenu from "./MobileMenu";
 import SearchOverlay from "./SearchOverlay";
 import { usePathname } from "next/navigation";
@@ -55,7 +55,11 @@ export default function Navbar() {
         <nav className="hidden md:flex items-center space-x-10">
           <Link href="/" className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-white transition-colors">Home</Link>
           <Link href="/blog" className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-white transition-colors">Blog</Link>
+          <Link href="/products" className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-white transition-colors">Products</Link>
           <Link href="/comparison" className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-white transition-colors">Compare</Link>
+          <Link href="/watchlist" className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-white transition-colors flex items-center gap-1.5">
+            <Bookmark className="w-3.5 h-3.5" /> Watchlist
+          </Link>
           
           <button 
             onClick={() => setIsSearchOpen(true)}

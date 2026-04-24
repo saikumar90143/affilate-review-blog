@@ -14,16 +14,33 @@ export const revalidate = 60;
 
 export default async function ComparisonPage({ searchParams }) {
   await connectToDatabase();
-  
+
   const { ids } = await searchParams;
   let products = [];
   
   if (ids) {
     const idList = ids.split(',').filter(id => id.length === 24); // MongoDB ID length
-    products = await Product.find({ _id: { $in: idList } });
+    const rawProducts = await Product.find({ _id: { $in: idList } }).lean();
+    products = JSON.parse(JSON.stringify(rawProducts));
+
+    // Handle single-product "comparison" by automatically adding category rivals
+    if (products.length === 1) {
+      const mainProduct = products[0];
+      const rawRivals = await Product.find({ 
+        category: mainProduct.category,
+        _id: { $ne: mainProduct._id } 
+      })
+      .sort({ rating: -1 })
+      .limit(2)
+      .lean();
+      
+      const rivals = JSON.parse(JSON.stringify(rawRivals));
+      products = [...products, ...rivals];
+    }
   } else {
-    // Default fallback: Top rated products
-    products = await Product.find({ rating: { $gte: 4 } }).sort({ rating: -1 }).limit(4);
+    // Default fallback: Top rated products across all categories
+    const rawProducts = await Product.find({ rating: { $gte: 4 } }).sort({ rating: -1 }).limit(4).lean();
+    products = JSON.parse(JSON.stringify(rawProducts));
   }
 
   return (
@@ -37,64 +54,64 @@ export default async function ComparisonPage({ searchParams }) {
             No highly-rated products found to compare yet. Add some to the database via Admin!
           </div>
         ) : (
-          <div className="overflow-x-auto rounded-2xl border border-border shadow-2xl">
-            <table className="w-full text-left border-collapse overflow-hidden glass min-w-[800px]">
+          <div className="overflow-x-auto no-scrollbar mask-edge-right rounded-2xl border border-border shadow-2xl relative">
+            <table className="w-full text-left border-separate border-spacing-0 overflow-hidden glass min-w-[700px] table-fixed">
               <thead>
                 <tr className="bg-dark-card border-b border-border">
-                  <th className="p-4 font-bold text-gray-300 w-1/5">Feature</th>
+                  <th className="p-4 md:p-6 font-bold text-gray-400 w-32 md:w-48 sticky left-0 z-20 bg-[#0d0d12] border-r border-border/50">Intelligence Logic</th>
                   {products.map((p, i) => (
-                    <th key={p._id.toString()} className="p-4 font-bold text-center w-1/5">
-                      <div className="relative w-full h-24 mb-4 bg-white rounded flex items-center justify-center p-2">
-                        <Image 
-                          src={p.image} 
-                          alt={p.title} 
-                          fill 
+                    <th key={p._id.toString()} className="p-4 md:p-6 font-bold text-center align-top">
+                      <div className="relative w-16 h-16 md:w-28 md:h-28 mb-4 bg-white rounded-xl md:rounded-2xl flex items-center justify-center p-2 mx-auto shadow-glow group-hover:scale-105 transition-transform">
+                        <Image
+                          src={p.image}
+                          alt={p.title}
+                          fill
                           sizes="150px"
-                          className="object-contain" 
+                          className="object-contain"
                         />
                       </div>
-                      <div className="text-lg mb-2 truncate" title={p.title}>{p.title}</div>
-                      {i === 0 && <span className="text-xs bg-primary-600 text-white px-2 py-1 rounded-full uppercase tracking-wider block w-24 mx-auto">Top Pick</span>}
+                      <div className="text-xs md:text-sm mb-2 truncate px-1" title={p.title}>{p.title}</div>
+                      {i === 0 && <span className="text-[10px] bg-primary-600 text-white px-2 py-0.5 rounded-full uppercase tracking-widest block w-fit mx-auto font-black">Elite Pick</span>}
                     </th>
                   ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 <tr className="hover:bg-white/5 transition-colors">
-                  <td className="p-4 font-semibold text-gray-400">Rating</td>
-                  {products.map((p) => <td key={p._id.toString()} className="p-4 text-center font-bold text-yellow-500">{p.rating} / 5</td>)}
+                  <td className="p-4 md:p-6 font-bold text-gray-500 sticky left-0 z-20 bg-[#0d0d12] border-r border-border/50 text-[10px] md:text-xs uppercase tracking-widest">Global Rating</td>
+                  {products.map((p) => <td key={p._id.toString()} className="p-4 md:p-6 text-center font-black text-yellow-500 text-sm md:text-lg">{p.rating} / 5</td>)}
                 </tr>
                 <tr className="hover:bg-white/5 transition-colors">
-                  <td className="p-4 font-semibold text-gray-400">Top Pro</td>
-                  {products.map((p) => <td key={p._id.toString()} className="p-4 text-center text-sm text-green-400">{p.pros?.[0] || 'N/A'}</td>)}
+                  <td className="p-4 md:p-6 font-bold text-gray-500 sticky left-0 z-20 bg-[#0d0d12] border-r border-border/50 text-[10px] md:text-xs uppercase tracking-widest">Elite Strength</td>
+                  {products.map((p) => <td key={p._id.toString()} className="p-4 md:p-6 text-center text-[10px] md:text-sm font-bold text-green-400">{p.pros?.[0] || 'N/A'}</td>)}
                 </tr>
                 <tr className="hover:bg-white/5 transition-colors">
-                  <td className="p-4 font-semibold text-gray-400">Main Con</td>
-                  {products.map((p) => <td key={p._id.toString()} className="p-4 text-center text-sm text-red-400">{p.cons?.[0] || 'N/A'}</td>)}
+                  <td className="p-4 md:p-6 font-bold text-gray-500 sticky left-0 z-20 bg-[#0d0d12] border-r border-border/50 text-[10px] md:text-xs uppercase tracking-widest">Key Limitation</td>
+                  {products.map((p) => <td key={p._id.toString()} className="p-4 md:p-6 text-center text-[10px] md:text-sm font-bold text-red-400">{p.cons?.[0] || 'N/A'}</td>)}
                 </tr>
                 <tr className="bg-dark-card/50">
-                  <td className="p-4"></td>
+                  <td className="p-4 md:p-6 sticky left-0 z-20 bg-[#0d0d12] border-r border-border/50"></td>
                   {products.map((p) => (
-                    <td key={p._id.toString()} className="p-4 text-center">
+                    <td key={p._id.toString()} className="p-4 md:p-6 text-center">
                       <div className="flex flex-col gap-2">
-                         {p.links && p.links.length > 0 ? (
-                           p.links.map((link, lidx) => (
-                             <AffiliateButton 
-                               key={lidx} 
-                               url={link.url} 
-                               platform={link.platform} 
-                               productId={p._id.toString()}
-                               className="w-full py-2 text-xs" 
-                             />
-                           ))
-                         ) : (
-                           <AffiliateButton 
-                             url={p.affiliateLink} 
-                             text="Check Price" 
-                             productId={p._id.toString()}
-                             className="w-full py-2 text-xs" 
-                           />
-                         )}
+                        {p.links && p.links.length > 0 ? (
+                          p.links.map((link, lidx) => (
+                            <AffiliateButton
+                              key={lidx}
+                              url={link.url}
+                              platform={link.platform}
+                              productId={p._id.toString()}
+                              className="w-full py-2 text-xs"
+                            />
+                          ))
+                        ) : (
+                          <AffiliateButton
+                            url={p.affiliateLink}
+                            text="Check Price"
+                            productId={p._id.toString()}
+                            className="w-full py-2 text-xs"
+                          />
+                        )}
                       </div>
                     </td>
                   ))}

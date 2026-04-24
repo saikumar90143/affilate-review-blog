@@ -38,8 +38,27 @@ export const sendWelcomeEmail = async (email) => {
   }
 };
 
-export const sendPriceAlertEmail = async (email, productName, currentPrice) => {
+export const sendPriceAlertEmail = async (email, productName, currentPrice, productSlug, alternatives = []) => {
   if (!process.env.RESEND_API_KEY) return;
+
+  const siteUrl = process.env.NEXTAUTH_URL || 'https://elitereviews.com';
+
+  let alternativeHTML = "";
+  if (alternatives && alternatives.length > 0) {
+    alternativeHTML = `
+      <div style="margin-top: 40px; padding: 20px; background-color: #111; border: 1px solid #3b82f633; border-radius: 15px;">
+         <p style="margin: 0; color: #a855f7; font-weight: bold; text-transform: uppercase; font-size: 12px; letter-spacing: 2px; margin-bottom: 15px;">Elite Intel: Top Alternatives</p>
+         <p style="font-size: 14px; color: #9ca3af; margin-bottom: 20px;">Still deciding? Here are the highest-rated competitors in the lab right now:</p>
+         ${alternatives.map(alt => `
+           <div style="margin-bottom: 15px; border-bottom: 1px solid #1f2937; padding-bottom: 15px;">
+             <p style="margin: 0; font-size: 16px; font-weight: bold; color: #fff;">${alt.title}</p>
+             <p style="margin: 5px 0 10px 0; font-size: 14px; color: #facc15; font-weight: bold;">Score: ${alt.rating}/5</p>
+             <a href="${siteUrl}/reviews/${alt.slug}" style="color: #60a5fa; text-decoration: none; font-size: 14px;">Read Full Review &rarr;</a>
+           </div>
+         `).join('')}
+      </div>
+    `;
+  }
 
   try {
     await resend.emails.send({
@@ -52,7 +71,8 @@ export const sendPriceAlertEmail = async (email, productName, currentPrice) => {
           <p style="font-size: 18px;">The price of <strong>${productName}</strong> has just dropped.</p>
           <p style="font-size: 24px; font-weight: bold; color: #10b981;">New Price: $${currentPrice}</p>
           <p>Don't wait—this target won't stay vulnerable for long.</p>
-          <a href="${process.env.NEXTAUTH_URL || 'https://elitereviews.com'}" style="display: inline-block; background-color: #3b82f6; color: #fff; padding: 15px 30px; text-decoration: none; border-radius: 10px; font-weight: bold; margin-top: 20px;">Secure the Deal</a>
+          <a href="${siteUrl}/reviews/${productSlug}" style="display: inline-block; background-color: #3b82f6; color: #fff; padding: 15px 30px; text-decoration: none; border-radius: 10px; font-weight: bold; margin-top: 20px;">Secure the Deal</a>
+          ${alternativeHTML}
         </div>
       `
     });

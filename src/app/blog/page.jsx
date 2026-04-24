@@ -40,10 +40,12 @@ export default async function BlogList({ searchParams }) {
   try {
     const fetchPosts = Post.find(postFilter).sort({ createdAt: -1 }).populate('category').lean()
       .catch(e => { console.error("[Blog] Posts fetch error:", e); return []; });
-    const fetchCategories = Category.find({}).sort({ name: 1 }).lean()
+    const fetchCategories = Category.find({ for: "post" }).sort({ name: 1 }).lean()
       .catch(e => { console.error("[Blog] Categories fetch error:", e); return []; });
 
     [posts, categories] = await Promise.all([fetchPosts, fetchCategories]);
+    posts = JSON.parse(JSON.stringify(posts));
+    categories = JSON.parse(JSON.stringify(categories));
     console.log(`[Blog] Successfully fetched ${posts.length} posts`);
   } catch (error) {
     console.error("[Blog] Critical error fetching data:", error);

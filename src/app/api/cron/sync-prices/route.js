@@ -40,9 +40,16 @@ export async function GET(req) {
 
       // If price dropped, notify watchers
       if (priceDropped) {
+        // Find alternative deals to cross-sell in the email
+        const rawAlternatives = await Product.find({
+          category: product.category,
+          _id: { $ne: product._id },
+        }).sort({ rating: -1 }).limit(2).select("title slug rating").lean();
+        const alternatives = JSON.parse(JSON.stringify(rawAlternatives));
+
         const alerts = await PriceAlert.find({ productId: product._id, isNotified: false });
         for (const alert of alerts) {
-          await sendPriceAlertEmail(alert.email, product.title, product.price);
+          await sendPriceAlertEmail(alert.email, product.title, product.price, product.slug, alternatives);
           alert.isNotified = true;
           await alert.save();
         }

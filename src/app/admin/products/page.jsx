@@ -10,7 +10,7 @@ function toSlug(str) {
   return str.toLowerCase().trim().replace(/[^\w\s-]/g, "").replace(/[\s_-]+/g, "-").replace(/^-+|-+$/g, "");
 }
 
-const blank = { title: "", slug: "", image: "", affiliateLink: "", links: [], category: "", rating: "5", pros: "", cons: "" };
+const blank = { title: "", slug: "", image: "", affiliateLink: "", links: [], category: "", rating: "5", pros: "", cons: "", description: "", badge: "", faqs: [] };
 
 export default function AdminProducts() {
   const [products, setProducts] = useState([]);
@@ -55,6 +55,9 @@ export default function AdminProducts() {
       cons: (prod.cons || []).join(", "),
       rating: String(prod.rating),
       links: prod.links || [],
+      description: prod.description || "",
+      badge: prod.badge || "",
+      faqs: prod.faqs || [],
     });
     setError(null); setSuccess(null);
     setIsEdit(true); setEditId(prod._id); setDrawerOpen(true);
@@ -369,6 +372,69 @@ export default function AdminProducts() {
                 <textarea rows={4} value={form.cons} onChange={e => setForm(f => ({...f, cons: e.target.value}))} className="input" placeholder="Expensive, Bulky" />
               </div>
             </div>
+          </div>
+
+          <div className="h-px bg-white/5"></div>
+
+          {/* Section 4: Badge & Description */}
+          <div className="space-y-8">
+            <div className="flex items-center gap-4">
+              <span className="w-2 h-2 rounded-full bg-yellow-500 shadow-glow"></span>
+              <h3 className="text-xs font-black uppercase tracking-[0.3em] text-gray-400">Badge & Description</h3>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="field">
+                <label className="label">Award Badge</label>
+                <select value={form.badge} onChange={e => setForm(f => ({...f, badge: e.target.value}))} className="input">
+                  <option value="">No Badge</option>
+                  <option value="editor_choice">⭐ Editor's Choice</option>
+                  <option value="best_value">💡 Best Value</option>
+                  <option value="top_rated">🔥 Top Rated</option>
+                  <option value="budget_pick">⚡ Budget Pick</option>
+                </select>
+              </div>
+              <div className="field">
+                <label className="label">Short Description</label>
+                <textarea rows={3} value={form.description} onChange={e => setForm(f => ({...f, description: e.target.value}))} className="input" placeholder="A brief expert summary of this product..." />
+              </div>
+            </div>
+          </div>
+
+          <div className="h-px bg-white/5"></div>
+
+          {/* Section 5: FAQ Management */}
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <span className="w-2 h-2 rounded-full bg-cyan-500 shadow-glow"></span>
+              <h3 className="text-xs font-black uppercase tracking-[0.3em] text-gray-400">FAQ Section</h3>
+            </div>
+            {(form.faqs || []).map((faq, idx) => (
+              <div key={idx} className="bg-black/20 p-4 rounded-2xl border border-white/5 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-black text-cyan-400 uppercase">Q{idx+1}</span>
+                  <button type="button" onClick={() => {
+                    const updated = form.faqs.filter((_, i) => i !== idx);
+                    setForm(f => ({...f, faqs: updated}));
+                  }} className="p-1.5 rounded-lg text-red-400 hover:bg-red-500/10"><Trash2 className="w-3.5 h-3.5"/></button>
+                </div>
+                <input placeholder="Question" value={faq.question}
+                  onChange={e => {
+                    const updated = [...form.faqs]; updated[idx].question = e.target.value;
+                    setForm(f => ({...f, faqs: updated}));
+                  }} className="input text-sm" />
+                <textarea placeholder="Answer" rows={2} value={faq.answer}
+                  onChange={e => {
+                    const updated = [...form.faqs]; updated[idx].answer = e.target.value;
+                    setForm(f => ({...f, faqs: updated}));
+                  }} className="input text-sm" />
+              </div>
+            ))}
+            <button type="button"
+              onClick={() => setForm(f => ({...f, faqs: [...(f.faqs||[]), {question: "", answer: ""}]}))}
+              className="w-full py-4 border-2 border-dashed border-white/5 rounded-2xl text-[10px] font-black uppercase tracking-widest text-gray-500 hover:border-cyan-500/50 hover:text-cyan-500 transition-all flex items-center justify-center gap-2"
+            >
+              <Plus className="w-4 h-4" /> Add FAQ Entry
+            </button>
           </div>
 
           {/* Deployment Bar */}
