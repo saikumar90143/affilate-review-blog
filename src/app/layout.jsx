@@ -19,6 +19,9 @@ const outfit = Outfit({
 export const metadata = {
   title: "Premium Reviews & Insights",
   description: "Discover top-tier affiliate reviews, informative blogs, and detailed product comparisons.",
+  verification: {
+    google: "hIzhTFyXemeU3LtPSqOK97z9U3xrkhQZ20uiPbazQ0U",
+  },
 };
 
 export default function RootLayout({ children }) {

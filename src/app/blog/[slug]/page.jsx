@@ -323,7 +323,7 @@ export default async function BlogPost({ params }) {
                   return (
                     <div
                       key={index}
-                      className="prose-elite mb-8 w-full"
+                      className="prose-elite mb-8 w-full max-w-full break-words overflow-x-hidden"
                       dangerouslySetInnerHTML={{ __html: sanitize(part) }}
                     />
                   );

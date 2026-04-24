@@ -10,7 +10,7 @@ export const sendWelcomeEmail = async (email) => {
 
   try {
     await resend.emails.send({
-      from: 'Elite Reviews <onboarding@resend.dev>',
+      from: 'Elite Reviews <hello@elitereviews.in>',
       to: email,
       subject: 'Elite Reviews | Your Exclusive Intel Access Granted',
       html: `
@@ -62,7 +62,7 @@ export const sendPriceAlertEmail = async (email, productName, currentPrice, prod
 
   try {
     await resend.emails.send({
-      from: 'Elite Reviews <onboarding@resend.dev>',
+      from: 'Elite Reviews <hello@elitereviews.in>',
       to: email,
       subject: `Price Drop Alert: ${productName}`,
       html: `
