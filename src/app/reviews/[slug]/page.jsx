@@ -153,11 +153,11 @@ export default async function ProductReview({ params }) {
               {product.description || `Based on our in-depth tests, the ${product.title} remains a compelling choice. Review the expert breakdown below before making your purchase decision.`}
             </p>
 
-            <div className="flex flex-wrap gap-4 mt-auto">
+            <div className="flex items-center gap-3 mt-auto w-full">
               <MagneticButton 
                 href={product.links?.[0]?.url || product.affiliateLink} 
                 target="_blank" 
-                className="px-8 py-5 bg-primary-600 hover:bg-primary-500 text-white rounded-[1.5rem] text-xs font-black uppercase tracking-widest transition-colors shadow-glow text-center flex-1"
+                className="px-8 py-5 bg-primary-600 hover:bg-primary-500 text-white rounded-[1.5rem] text-xs font-black uppercase tracking-widest transition-colors shadow-glow text-center flex-1 w-full"
               >
                 Check Best Price
               </MagneticButton>
@@ -176,18 +176,20 @@ export default async function ProductReview({ params }) {
           </GlowCard>
 
           {/* Bento Box 4: Score Metrics Grid */}
-          <GlowCard className="md:col-span-1 lg:col-span-2 xl:col-span-1 p-6 grid grid-cols-2 gap-3 bg-white/2">
-            {[
-              { label: "Performance", val: product.scores?.performance, color: "#60a5fa" },
-              { label: "Value",       val: product.scores?.value,       color: "#34d399" },
-              { label: "Build Quality", val: product.scores?.build,     color: "#a78bfa" },
-              { label: "Features",    val: product.scores?.features,    color: "#f59e0b" },
-            ].map((s) => (
-              <div key={s.label} className="bg-black/40 rounded-2xl border border-white/5 p-4 flex flex-col justify-center text-center group hover:border-white/20 transition-colors">
-                <div className="text-2xl font-black mb-1 transition-transform group-hover:scale-110" style={{ color: s.color }}>{s.val}%</div>
-                <div className="text-[8px] text-gray-500 uppercase tracking-widest font-black leading-tight">{s.label}</div>
-              </div>
-            ))}
+          <GlowCard className="md:col-span-1 lg:col-span-2 xl:col-span-1 p-6 bg-white/2">
+            <div className="grid grid-cols-2 gap-3 w-full h-full">
+              {[
+                { label: "Performance", val: product.scores?.performance, color: "#60a5fa" },
+                { label: "Value",       val: product.scores?.value,       color: "#34d399" },
+                { label: "Build Quality", val: product.scores?.build,     color: "#a78bfa" },
+                { label: "Features",    val: product.scores?.features,    color: "#f59e0b" },
+              ].map((s) => (
+                <div key={s.label} className="bg-black/40 rounded-2xl border border-white/5 p-4 flex flex-col justify-center text-center group hover:border-white/20 transition-colors">
+                  <div className="text-xl sm:text-2xl font-black mb-1 transition-transform group-hover:scale-110" style={{ color: s.color }}>{s.val}%</div>
+                  <div className="text-[8px] text-gray-500 uppercase tracking-widest font-black leading-tight">{s.label}</div>
+                </div>
+              ))}
+            </div>
           </GlowCard>
 
           {/* Bento Box 5: Pros */}

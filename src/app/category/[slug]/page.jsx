@@ -8,6 +8,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import AffiliateButton from "@/components/AffiliateButton";
 import { ArrowLeft } from "lucide-react";
+import NativeAdCard from "@/components/NativeAdCard";
 
 export const revalidate = 60;
 
