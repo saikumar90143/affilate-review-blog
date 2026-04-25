@@ -1,4 +1,5 @@
 import { Mail, MapPin } from "lucide-react";
+import ContactForm from "@/components/ContactForm";
 
 export const metadata = {
   title: "Contact Us | EliteReviews",
@@ -16,26 +17,7 @@ export default function ContactPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           {/* Form */}
-          <div className="bg-dark-card p-8 rounded-2xl border border-border">
-            <h2 className="text-2xl font-bold mb-6">Send a Message</h2>
-            <form className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-1">Name</label>
-                <input type="text" required className="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-white focus:border-primary-500 outline-none" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-1">Email</label>
-                <input type="email" required className="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-white focus:border-primary-500 outline-none" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-1">Message</label>
-                <textarea required rows="4" className="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-white focus:border-primary-500 outline-none"></textarea>
-              </div>
-              <button type="button" className="w-full bg-primary-600 hover:bg-primary-500 text-white font-bold py-3 rounded-lg transition-colors mt-2">
-                Submit Request
-              </button>
-            </form>
-          </div>
+          <ContactForm />
 
           {/* Details */}
           <div className="flex flex-col justify-center space-y-8">
