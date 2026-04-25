@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Zap, Menu, X, Search, Bookmark } from "lucide-react";
-import MobileMenu from "./MobileMenu";
-import SearchOverlay from "./SearchOverlay";
+import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
+
+const MobileMenu = dynamic(() => import("./MobileMenu"), { ssr: false });
+const SearchOverlay = dynamic(() => import("./SearchOverlay"), { ssr: false });
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

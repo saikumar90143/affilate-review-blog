@@ -2,7 +2,7 @@ import sanitizeHtml from 'sanitize-html';
 
 export const sanitizeOptions = {
   allowedTags: sanitizeHtml.defaults.allowedTags.concat([
-    'img', 'iframe', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'span', 'div'
+    'a', 'img', 'iframe', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'span', 'div', 'p', 'br', 'strong', 'em', 'ul', 'ol', 'li'
   ]),
   allowedAttributes: {
     ...sanitizeHtml.defaults.allowedAttributes,
@@ -36,7 +36,19 @@ export const sanitizeOptions = {
   }
 };
 
+// Convert plain-text URLs to anchor tags before sanitizing
+const autoLinkUrls = (html) => {
+  if (!html) return '';
+  // Only match URLs that are NOT already inside an <a> tag
+  // Replace bare https:// or http:// URLs that aren't already wrapped in an href attribute
+  return html.replace(
+    /(?<!href=["'])(?<!src=["'])(https?:\/\/[^\s<>"']+)/g,
+    '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
+  );
+};
+
 export const sanitize = (html) => {
   if (!html) return '';
-  return sanitizeHtml(html, sanitizeOptions);
+  const withLinks = autoLinkUrls(html);
+  return sanitizeHtml(withLinks, sanitizeOptions);
 };

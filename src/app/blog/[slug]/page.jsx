@@ -17,17 +17,20 @@ import AffiliateDisclosure from "@/components/AffiliateDisclosure";
 import SummaryCard from "@/components/SummaryCard";
 import ShareBar from "@/components/ShareBar";
 import FAQ from "@/components/FAQ";
+import { autoLinkKeywords } from "@/lib/internalLinker";
+import { getPlaceholder } from "@/lib/placeholders";
 import { sanitize } from "@/lib/sanitizer";
 import Image from "next/image";
 import Link from "next/link";
-import { Search, ChevronRight, Clock } from "lucide-react";
-import QuickConvertBar from "@/components/QuickConvertBar";
-import ComparisonMatrix from "@/components/ComparisonMatrix";
-import ExitIntentPopup from "@/components/ExitIntentPopup";
-import { autoLinkKeywords } from "@/lib/internalLinker";
-import { getPlaceholder } from "@/lib/placeholders";
-import AudioPlayer from "@/components/AudioPlayer";
-import NewsletterForm from "@/components/NewsletterForm";
+import { ChevronRight, Clock } from "lucide-react";
+import dynamic from "next/dynamic";
+
+// Code-split heavy client components into separate lazy chunks
+const AudioPlayer = dynamic(() => import("@/components/AudioPlayer"));
+const NewsletterForm = dynamic(() => import("@/components/NewsletterForm"));
+const ComparisonMatrix = dynamic(() => import("@/components/ComparisonMatrix"));
+const QuickConvertBar = dynamic(() => import("@/components/QuickConvertBar"));
+const ExitIntentPopup = dynamic(() => import("@/components/ExitIntentPopup"));
 
 export const revalidate = 3600;
 
@@ -258,9 +261,11 @@ export default async function BlogPost({ params }) {
                   src={post.featuredImage}
                   alt={post.title}
                   fill
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 900px"
+                  quality={82}
                   className="object-cover group-hover:scale-105 transition-transform duration-[2s] ease-out opacity-80"
                   priority
+                  fetchPriority="high"
                   placeholder="blur"
                   blurDataURL={getPlaceholder(1200, 600)}
                 />

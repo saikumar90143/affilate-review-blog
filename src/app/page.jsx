@@ -8,9 +8,16 @@ import Image from "next/image";
 import Link from "next/link";
 import AffiliateButton from "@/components/AffiliateButton";
 import TrustBanner from "@/components/TrustBanner";
-import AdSlot from "@/components/AdSlot";
-import NewsletterForm from "@/components/NewsletterForm";
-import GearMatchmaker from "@/components/GearMatchmaker";
+import dynamic from "next/dynamic";
+
+// Code-split heavy client components into separate lazy chunks
+const AdSlot = dynamic(() => import("@/components/AdSlot"));
+const NewsletterForm = dynamic(() => import("@/components/NewsletterForm"));
+const GearMatchmaker = dynamic(() => import("@/components/GearMatchmaker"), {
+  loading: () => (
+    <div className="h-64 rounded-3xl bg-white/5 border border-white/5 animate-pulse" />
+  ),
+});
 
 export const revalidate = 60;
 
@@ -97,8 +104,10 @@ export default async function Home() {
             alt="Hero" 
             fill 
             sizes="100vw"
+            quality={60}
             className="object-cover opacity-20 mix-blend-screen scale-110 blur-[2px]"
             priority
+            fetchPriority="high"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-dark-bg/40 via-dark-bg/80 to-dark-bg"></div>
         </div>
@@ -166,7 +175,8 @@ export default async function Home() {
                         src={getValidImage(spotlightProduct.image)} 
                         alt={spotlightProduct.title} 
                         fill 
-                        sizes="(max-width: 1024px) 100vw, 500px"
+                        sizes="(max-width: 1024px) 0px, 450px"
+                        quality={85}
                         className="object-contain p-8 group-hover:scale-110 transition-transform duration-700" 
                       />
                       <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-gray-100/50 to-transparent"></div>
@@ -239,7 +249,8 @@ export default async function Home() {
                          src={getValidImage(latestPosts[0].featuredImage)} 
                          alt={latestPosts[0].title} 
                          fill 
-                         sizes="(max-width: 1024px) 100vw, 800px"
+                         sizes="(max-width: 1024px) 100vw, 55vw"
+                         quality={80}
                          className="object-cover group-hover:scale-105 transition-transform duration-[2s]"
                        />
                        <div className="absolute inset-0 bg-gradient-to-t from-dark-bg/90 via-dark-bg/20 to-transparent"></div>
@@ -270,7 +281,7 @@ export default async function Home() {
                      <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-primary-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
 
                      <div className="relative w-24 h-24 md:w-32 md:h-32 rounded-[1rem] md:rounded-[1.5rem] overflow-hidden bg-[#050508] shrink-0 border border-white/5 z-10 shadow-inner">
-                        <Image src={getValidImage(post.featuredImage)} alt={post.title} fill sizes="128px" className="object-cover transition-transform group-hover:scale-110 duration-700" />
+                        <Image src={getValidImage(post.featuredImage)} alt={post.title} fill sizes="(max-width: 640px) 96px, 128px" quality={75} className="object-cover transition-transform group-hover:scale-110 duration-700" />
                      </div>
                      <div className="flex-1 py-1 md:py-2 relative z-10">
                         <div className="flex items-center gap-2 mb-1.5 md:mb-2">
@@ -322,7 +333,7 @@ export default async function Home() {
                 style={{ transitionDelay: `${idx * 150}ms` }}
               >
                 <div className="relative aspect-square bg-white rounded-[2rem] overflow-hidden mb-8 shadow-inner flex items-center justify-center p-8">
-                  <Image src={getValidImage(prod.image)} alt={prod.title} fill sizes="(max-width: 768px) 100vw, 25vw" className="object-contain p-6 group-hover:scale-110 transition-transform duration-700" />
+                  <Image src={getValidImage(prod.image)} alt={prod.title} fill sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 200px" quality={80} className="object-contain p-6 group-hover:scale-110 transition-transform duration-700" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent"></div>
                   <div className="absolute top-4 right-4 bg-dark-bg/80 backdrop-blur-md text-white px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border border-white/10">
                     High Rank

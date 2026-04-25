@@ -4,25 +4,25 @@ import { notFound } from "next/navigation";
 import { Check, X, Star, Award, TrendingUp, Zap, Layers, AlertTriangle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import FaqSection from "@/components/FaqSection";
-import TrustRadar from "@/components/TrustRadar";
-import StickyBuyBar from "@/components/StickyBuyBar";
-import HelpfulVote from "@/components/HelpfulVote";
-import WatchlistButton from "@/components/WatchlistButton";
-import AffiliateButton from "@/components/AffiliateButton";
-import CommunityReview from "@/components/CommunityReview";
-import GlowCard from "@/components/GlowCard";
-import MagneticButton from "@/components/MagneticButton";
-import RevealText from "@/components/RevealText";
+import dynamic from "next/dynamic";
+
+const FaqSection = dynamic(() => import("@/components/FaqSection"));
+const TrustRadar = dynamic(() => import("@/components/TrustRadar"));
+const StickyBuyBar = dynamic(() => import("@/components/StickyBuyBar"));
+const HelpfulVote = dynamic(() => import("@/components/HelpfulVote"));
+const CommunityReview = dynamic(() => import("@/components/CommunityReview"));
+const MagneticButton = dynamic(() => import("@/components/MagneticButton"));
+const RevealText = dynamic(() => import("@/components/RevealText"));
+const GlowCard = dynamic(() => import("@/components/GlowCard"));
 
 export const revalidate = 3600;
 
 // Badge config
 const BADGES = {
   editor_choice: { label: "Editor's Choice", icon: Award, color: "text-yellow-400", bg: "bg-yellow-500/10 border-yellow-500/30", glow: "rgba(234, 179, 8, 0.15)" },
-  best_value:    { label: "Best Value",       icon: TrendingUp, color: "text-green-400", bg: "bg-green-500/10 border-green-500/30", glow: "rgba(34, 197, 94, 0.15)" },
-  top_rated:     { label: "Top Rated",        icon: Star,    color: "text-primary-400", bg: "bg-primary-500/10 border-primary-500/30", glow: "rgba(59, 130, 246, 0.15)" },
-  budget_pick:   { label: "Budget Pick",      icon: Zap,     color: "text-cyan-400",   bg: "bg-cyan-500/10 border-cyan-500/30", glow: "rgba(6, 182, 212, 0.15)" },
+  best_value: { label: "Best Value", icon: TrendingUp, color: "text-green-400", bg: "bg-green-500/10 border-green-500/30", glow: "rgba(34, 197, 94, 0.15)" },
+  top_rated: { label: "Top Rated", icon: Star, color: "text-primary-400", bg: "bg-primary-500/10 border-primary-500/30", glow: "rgba(59, 130, 246, 0.15)" },
+  budget_pick: { label: "Budget Pick", icon: Zap, color: "text-cyan-400", bg: "bg-cyan-500/10 border-cyan-500/30", glow: "rgba(6, 182, 212, 0.15)" },
 };
 
 export async function generateMetadata({ params }) {
@@ -75,11 +75,11 @@ export default async function ProductReview({ params }) {
     },
     offers: product.affiliateLink
       ? {
-          "@type": "Offer",
-          url: product.affiliateLink,
-          priceCurrency: "USD",
-          availability: "https://schema.org/InStock",
-        }
+        "@type": "Offer",
+        url: product.affiliateLink,
+        priceCurrency: "USD",
+        availability: "https://schema.org/InStock",
+      }
       : undefined,
   };
 
@@ -93,7 +93,7 @@ export default async function ProductReview({ params }) {
       />
 
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-gray-600 mb-10 w-full max-w-5xl mx-auto">
           <Link href="/" className="hover:text-white transition-colors">Home</Link>
@@ -113,7 +113,7 @@ export default async function ProductReview({ params }) {
 
         {/* BENTO BOX GRID LAYOUT */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 auto-rows-[minmax(180px,_auto)] mb-20 max-w-7xl mx-auto">
-          
+
           {/* Bento Box 1: Product Image (Spans 2 columns, 2 rows) */}
           <GlowCard spotlightColor={badge ? badge.glow : "rgba(59, 130, 246, 0.15)"} className="md:col-span-2 xl:col-span-2 md:row-span-2 p-8 flex items-center justify-center group bg-white/2">
             {badge && (
@@ -130,6 +130,7 @@ export default async function ProductReview({ params }) {
                 sizes="(max-width: 768px) 100vw, 500px"
                 className="object-contain p-8 group-hover:scale-105 transition-transform duration-700"
                 priority
+                fetchPriority="high"
               />
             </div>
           </GlowCard>
@@ -139,7 +140,7 @@ export default async function ProductReview({ params }) {
             <RevealText as="h1" className="text-4xl md:text-5xl lg:text-6xl font-black mb-4 tracking-tighter leading-none premium-gradient">
               {product.title}
             </RevealText>
-            
+
             <div className="flex items-center gap-3 mb-6">
               <div className="flex text-yellow-500">
                 {[...Array(5)].map((_, i) => (
@@ -154,9 +155,9 @@ export default async function ProductReview({ params }) {
             </p>
 
             <div className="flex items-center gap-3 mt-auto w-full">
-              <MagneticButton 
-                href={product.links?.[0]?.url || product.affiliateLink} 
-                target="_blank" 
+              <MagneticButton
+                href={product.links?.[0]?.url || product.affiliateLink}
+                target="_blank"
                 className="px-8 py-5 bg-primary-600 hover:bg-primary-500 text-white rounded-[1.5rem] text-xs font-black uppercase tracking-widest transition-colors shadow-glow text-center flex-1 w-full"
               >
                 Check Best Price
@@ -180,9 +181,9 @@ export default async function ProductReview({ params }) {
             <div className="grid grid-cols-2 gap-3 w-full h-full">
               {[
                 { label: "Performance", val: product.scores?.performance, color: "#60a5fa" },
-                { label: "Value",       val: product.scores?.value,       color: "#34d399" },
-                { label: "Build Quality", val: product.scores?.build,     color: "#a78bfa" },
-                { label: "Features",    val: product.scores?.features,    color: "#f59e0b" },
+                { label: "Value", val: product.scores?.value, color: "#34d399" },
+                { label: "Build Quality", val: product.scores?.build, color: "#a78bfa" },
+                { label: "Features", val: product.scores?.features, color: "#f59e0b" },
               ].map((s) => (
                 <div key={s.label} className="bg-black/40 rounded-2xl border border-white/5 p-4 flex flex-col justify-center text-center group hover:border-white/20 transition-colors">
                   <div className="text-xl sm:text-2xl font-black mb-1 transition-transform group-hover:scale-110" style={{ color: s.color }}>{s.val}%</div>
@@ -194,38 +195,38 @@ export default async function ProductReview({ params }) {
 
           {/* Bento Box 5: Pros */}
           <GlowCard className="col-span-1 md:col-span-2 lg:col-span-1 xl:col-span-2 p-8 bg-green-900/10 border-green-500/20">
-             <h3 className="font-black text-green-400 flex items-center gap-2 mb-6 text-sm uppercase tracking-widest">
-                <Check className="w-5 h-5 bg-green-500/20 rounded-full p-0.5" /> What We Love
-             </h3>
-             <ul className="space-y-4">
-               {product.pros?.map((pro, i) => (
-                 <li key={i} className="flex items-start gap-3 text-sm text-gray-300">
-                   <div className="w-1.5 h-1.5 rounded-full bg-green-500 mt-2 shrink-0 shadow-[0_0_10px_rgba(34,197,94,0.5)]"></div>
-                   <span className="leading-relaxed">{pro}</span>
-                 </li>
-               ))}
-               {(!product.pros || product.pros.length === 0) && (
-                 <li className="text-sm text-gray-500 italic">No pros listed.</li>
-               )}
-             </ul>
+            <h3 className="font-black text-green-400 flex items-center gap-2 mb-6 text-sm uppercase tracking-widest">
+              <Check className="w-5 h-5 bg-green-500/20 rounded-full p-0.5" /> What We Love
+            </h3>
+            <ul className="space-y-4">
+              {product.pros?.map((pro, i) => (
+                <li key={i} className="flex items-start gap-3 text-sm text-gray-300">
+                  <div className="w-1.5 h-1.5 rounded-full bg-green-500 mt-2 shrink-0 shadow-[0_0_10px_rgba(34,197,94,0.5)]"></div>
+                  <span className="leading-relaxed">{pro}</span>
+                </li>
+              ))}
+              {(!product.pros || product.pros.length === 0) && (
+                <li className="text-sm text-gray-500 italic">No pros listed.</li>
+              )}
+            </ul>
           </GlowCard>
 
           {/* Bento Box 6: Cons */}
           <GlowCard className="col-span-1 md:col-span-2 lg:col-span-2 xl:col-span-2 p-8 bg-red-900/10 border-red-500/20">
-             <h3 className="font-black text-red-400 flex items-center gap-2 mb-6 text-sm uppercase tracking-widest">
-                <AlertTriangle className="w-5 h-5 bg-red-500/20 rounded-full p-0.5" /> Watch Out For
-             </h3>
-             <ul className="space-y-4">
-               {product.cons?.map((con, i) => (
-                 <li key={i} className="flex items-start gap-3 text-sm text-gray-300">
-                   <div className="w-1.5 h-1.5 rounded-full bg-red-500 mt-2 shrink-0 shadow-[0_0_10px_rgba(239,68,68,0.5)]"></div>
-                   <span className="leading-relaxed">{con}</span>
-                 </li>
-               ))}
-               {(!product.cons || product.cons.length === 0) && (
-                 <li className="text-sm text-gray-500 italic">No cons listed.</li>
-               )}
-             </ul>
+            <h3 className="font-black text-red-400 flex items-center gap-2 mb-6 text-sm uppercase tracking-widest">
+              <AlertTriangle className="w-5 h-5 bg-red-500/20 rounded-full p-0.5" /> Watch Out For
+            </h3>
+            <ul className="space-y-4">
+              {product.cons?.map((con, i) => (
+                <li key={i} className="flex items-start gap-3 text-sm text-gray-300">
+                  <div className="w-1.5 h-1.5 rounded-full bg-red-500 mt-2 shrink-0 shadow-[0_0_10px_rgba(239,68,68,0.5)]"></div>
+                  <span className="leading-relaxed">{con}</span>
+                </li>
+              ))}
+              {(!product.cons || product.cons.length === 0) && (
+                <li className="text-sm text-gray-500 italic">No cons listed.</li>
+              )}
+            </ul>
           </GlowCard>
 
           {/* Bento Box 7: Specs */}
@@ -249,19 +250,19 @@ export default async function ProductReview({ params }) {
 
         {/* Existing Sections Below the Bento Fold */}
         <div className="max-w-4xl mx-auto">
-           {/* FAQ Section with Reveal Typography */}
-           <RevealText as="h2" className="text-3xl font-black mb-4">Frequently Asked Questions</RevealText>
-           <FaqSection faqs={product.faqs} productTitle={product.title} />
+          {/* FAQ Section with Reveal Typography */}
+          <RevealText as="h2" className="text-3xl font-black mb-4">Frequently Asked Questions</RevealText>
+          <FaqSection faqs={product.faqs} productTitle={product.title} />
 
-           {/* Helpful Vote */}
-           <HelpfulVote
-             productId={product._id}
-             initialYes={product.helpful?.yes || 0}
-             initialNo={product.helpful?.no || 0}
-           />
+          {/* Helpful Vote */}
+          <HelpfulVote
+            productId={product._id}
+            initialYes={product.helpful?.yes || 0}
+            initialNo={product.helpful?.no || 0}
+          />
 
-           {/* User Generated Content (Community Reviews) */}
-           <CommunityReview productId={product._id} />
+          {/* User Generated Content (Community Reviews) */}
+          <CommunityReview productId={product._id} />
         </div>
 
         {/* Related Products */}
