@@ -4,11 +4,9 @@ import Script from "next/script";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import dynamic from "next/dynamic";
-
-const FloatingComparisonBar = dynamic(() => import("@/components/FloatingComparisonBar"), { ssr: false });
-const BackToTop = dynamic(() => import("@/components/BackToTop"), { ssr: false });
-const ExitIntentPopup = dynamic(() => import("@/components/ExitIntentPopup"), { ssr: false });
+import FloatingComparisonBar from "@/components/FloatingComparisonBar";
+import BackToTop from "@/components/BackToTop";
+import ExitIntentPopup from "@/components/ExitIntentPopup";
 import MarqueeBanner from "@/components/MarqueeBanner";
 import { ComparisonProvider } from "@/context/ComparisonContext";
 
