@@ -4,9 +4,11 @@ import Script from "next/script";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import FloatingComparisonBar from "@/components/FloatingComparisonBar";
-import BackToTop from "@/components/BackToTop";
-import ExitIntentPopup from "@/components/ExitIntentPopup";
+import dynamic from "next/dynamic";
+
+const FloatingComparisonBar = dynamic(() => import("@/components/FloatingComparisonBar"), { ssr: false });
+const BackToTop = dynamic(() => import("@/components/BackToTop"), { ssr: false });
+const ExitIntentPopup = dynamic(() => import("@/components/ExitIntentPopup"), { ssr: false });
 import MarqueeBanner from "@/components/MarqueeBanner";
 import { ComparisonProvider } from "@/context/ComparisonContext";
 
@@ -32,8 +34,9 @@ export default function RootLayout({ children }) {
     <html lang="en" className="dark" data-scroll-behavior="smooth">
       <body className={`${outfit.variable} font-sans min-h-screen flex flex-col`}>
         {adClient && process.env.NODE_ENV === 'production' && (
-          <script
-            async
+          <Script
+            id="adsbygoogle"
+            strategy="lazyOnload"
             src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adClient}`}
             crossOrigin="anonymous"
           />
