@@ -12,6 +12,8 @@ const ProductSchema = new Schema(
         url: { type: String, required: true },
       }
     ],
+    price: { type: Number, default: 0 },
+    currency: { type: String, default: "INR" },
     pros: [{ type: String }],
     cons: [{ type: String }],
     specs: { type: Map, of: String },

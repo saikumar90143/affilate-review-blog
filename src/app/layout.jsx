@@ -11,9 +11,19 @@ const outfit = Outfit({
 });
 
 export const metadata = {
-  title: "Premium Reviews & Insights",
+  title: "EliteReviews | Premium Gear Insights & Technical Analysis",
   description:
-    "Discover top-tier affiliate reviews, informative blogs, and detailed product comparisons.",
+    "Explore in-depth technical reviews, professional product comparisons, and laboratory-tested gear insights.",
+  icons: {
+    icon: [
+      { url: '/icon.png', sizes: '32x32', type: 'image/png' },
+      { url: '/icon.png', sizes: '96x96', type: 'image/png' },
+      { url: '/icon.png', sizes: '144x144', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+  },
   verification: {
     google: "hIzhTFyXemeU3LtPSqOK97z9U3xrkhQZ20uiPbazQ0U",
   },

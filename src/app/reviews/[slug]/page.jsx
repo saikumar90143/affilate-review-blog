@@ -14,6 +14,7 @@ const CommunityReview = dynamic(() => import("@/components/CommunityReview"));
 const MagneticButton = dynamic(() => import("@/components/MagneticButton"));
 const RevealText = dynamic(() => import("@/components/RevealText"));
 const GlowCard = dynamic(() => import("@/components/GlowCard"));
+const WatchlistButton = dynamic(() => import("@/components/WatchlistButton"));
 
 export const revalidate = 3600;
 
