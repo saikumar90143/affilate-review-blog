@@ -55,11 +55,28 @@ export default function Navbar() {
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center space-x-10">
-          <Link href="/" className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-white transition-colors">Home</Link>
-          <Link href="/blog" className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-white transition-colors">Blog</Link>
-          <Link href="/products" className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-white transition-colors">Products</Link>
-          <Link href="/comparison" className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-white transition-colors">Compare</Link>
-          <Link href="/watchlist" className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-white transition-colors flex items-center gap-1.5">
+          {[
+            { label: "Home", href: "/" },
+            { label: "Blog", href: "/blog" },
+            { label: "Products", href: "/products" },
+            { label: "Compare", href: "/comparison" },
+            { label: "Services", href: "/services" },
+          ].map((item) => {
+            const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+            return (
+              <Link 
+                key={item.href} 
+                href={item.href} 
+                className={`text-[11px] font-black uppercase tracking-[0.2em] transition-colors ${isActive ? 'text-primary-400' : 'text-gray-400 hover:text-white'}`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
+          <Link 
+            href="/watchlist" 
+            className={`text-[11px] font-black uppercase tracking-[0.2em] transition-colors flex items-center gap-1.5 ${pathname === '/watchlist' ? 'text-primary-400' : 'text-gray-400 hover:text-white'}`}
+          >
             <Bookmark className="w-3.5 h-3.5" /> Watchlist
           </Link>
           

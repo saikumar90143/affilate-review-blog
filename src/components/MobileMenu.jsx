@@ -1,9 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ArrowRight, Globe, Cpu, Code, ShieldCheck, Mail } from "lucide-react";
 
 export default function MobileMenu({ isOpen, onClose }) {
+  const pathname = usePathname();
+
   if (!isOpen) return null;
 
   const navItems = [
@@ -11,6 +14,7 @@ export default function MobileMenu({ isOpen, onClose }) {
     { label: "Blog",     href: "/blog" },
     { label: "Products", href: "/products" },
     { label: "Compare",  href: "/comparison" },
+    { label: "Services", href: "/services" },
   ];
 
   return (
@@ -29,17 +33,20 @@ export default function MobileMenu({ isOpen, onClose }) {
            <div className="flex flex-col gap-2">
               <span className="text-primary-500 font-black text-[10px] uppercase tracking-[0.3em] ml-1">Universal Access</span>
               <nav className="flex flex-col">
-                {navItems.map((item, idx) => (
-                  <Link 
-                    key={item.href} 
-                    href={item.href}
-                    className="text-3xl font-black tracking-tighter text-white hover:text-primary-400 transition-colors py-3 flex items-center justify-between group"
-                    style={{ animationDelay: `${idx * 100}ms` }}
-                  >
-                    {item.label}
-                    <ArrowRight className="w-8 h-8 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-primary-500" />
-                  </Link>
-                ))}
+                {navItems.map((item, idx) => {
+                  const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+                  return (
+                    <Link 
+                      key={item.href} 
+                      href={item.href}
+                      className={`text-3xl font-black tracking-tighter transition-colors py-3 flex items-center justify-between group ${isActive ? 'text-primary-400' : 'text-white hover:text-primary-400'}`}
+                      style={{ animationDelay: `${idx * 100}ms` }}
+                    >
+                      {item.label}
+                      <ArrowRight className={`w-8 h-8 transition-all ${isActive ? 'opacity-100 translate-x-0 text-primary-500' : 'opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 text-primary-500'}`} />
+                    </Link>
+                  );
+                })}
               </nav>
            </div>
 

@@ -14,6 +14,7 @@ import dynamic from "next/dynamic";
 const AdSlot = dynamic(() => import("@/components/AdSlot"));
 const NewsletterForm = dynamic(() => import("@/components/NewsletterForm"));
 const PriceSlider = dynamic(() => import("@/components/PriceSlider"));
+const ServicesSection = dynamic(() => import("@/components/ServicesSection"));
 
 export const revalidate = 60;
 
@@ -448,6 +449,9 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      {/* Services Section */}
+      <ServicesSection />
 
       {/* Newsletter Premium - High Impact */}
       <section className="py-20 md:py-32 px-4 relative overflow-hidden">

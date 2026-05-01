@@ -19,6 +19,10 @@ const ExitIntentPopup = dynamic(
   () => import("@/components/ExitIntentPopup"),
   { ssr: false }
 );
+const FloatingWhatsApp = dynamic(
+  () => import("@/components/FloatingWhatsApp"),
+  { ssr: false }
+);
 
 export default function ClientShell({ children }) {
   return (
@@ -36,6 +40,7 @@ export default function ClientShell({ children }) {
       <FloatingComparisonBar />
       <BackToTop />
       <ExitIntentPopup />
+      <FloatingWhatsApp />
     </ComparisonProvider>
   );
 }
