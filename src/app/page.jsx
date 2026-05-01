@@ -98,111 +98,137 @@ export default async function Home() {
       <section className="relative min-h-screen flex items-center pt-24 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
         {/* Animated Background Asset */}
         <div className="absolute inset-0 z-0">
-          <Image
-            src="/assets/hero_banner.png"
-            alt="Hero"
-            fill
-            sizes="100vw"
-            quality={60}
-            className="object-cover opacity-20 mix-blend-screen scale-110 blur-[2px]"
-            priority
-            fetchPriority="high"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-dark-bg/40 via-dark-bg/80 to-dark-bg"></div>
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none"></div>
+          <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary-600/10 rounded-full blur-[120px] -mr-[400px] -mt-[400px] pointer-events-none animate-pulse duration-[4s]"></div>
+          <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[120px] -ml-[300px] -mb-[300px] pointer-events-none animate-pulse duration-[5s]"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-dark-bg/80 to-dark-bg"></div>
         </div>
 
-        <div className="relative z-10 mx-auto max-w-7xl w-full grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+        <div className="relative z-10 mx-auto max-w-7xl w-full grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center">
           {/* Hero Left Content */}
           <div className="text-center lg:text-left reveal-up">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-primary-400 text-[10px] font-black uppercase tracking-[0.2em] mb-8">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
-              </span>
-              2026 Editorial Edition
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-primary-400 text-[10px] font-black uppercase tracking-[0.2em] mb-6 shadow-glow">
+              🚀 Something Powerful Just Went Live!
             </div>
 
-            <h1 className="text-5xl sm:text-6xl md:text-8xl font-black tracking-tighter mb-8 leading-[1.1] md:leading-[0.9] lg:max-w-xl">
-              Precision <br />
-              <span className="premium-gradient">Gear Reviews.</span>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter mb-8 leading-[1.1] md:leading-[0.95] drop-shadow-2xl">
+              I'VE OFFICIALLY LAUNCHED MY <br />
+              <span className="premium-gradient drop-shadow-[0_0_20px_rgba(59,130,246,0.3)]">WEBSITE 🌐</span>
             </h1>
 
-            <p className="text-base sm:text-xl text-gray-400 max-w-lg mx-auto lg:mx-0 mb-10 md:mb-12 leading-relaxed font-light italic">
-              "We separate high-performance gear from the hype. Technical analysis and real-world testing for the elite consumer."
-            </p>
-
-            <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4 md:gap-5 mb-12 md:mb-16">
-              <Link href="/blog" className="px-6 py-4 md:px-10 md:py-5 rounded-2xl bg-white text-black text-sm md:text-base font-black transition-all hover:bg-gray-200 hover:scale-105 shadow-2xl flex items-center justify-center gap-3 group w-full sm:w-auto">
-                Explore Reviews <ArrowRight className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
-              <Link href="/comparison" className="px-6 py-4 md:px-10 md:py-5 rounded-2xl glass-premium text-white text-sm md:text-base font-bold transition-all hover:bg-white/10 flex items-center justify-center gap-3 w-full sm:w-auto">
-                <BarChart3 className="w-4 h-4 md:w-5 md:h-5" /> Product Comparison
-              </Link>
+            <div className="mb-10 text-left bg-white/5 border border-white/10 rounded-[2rem] p-6 sm:p-8 backdrop-blur-sm">
+              <p className="text-sm font-black uppercase tracking-[0.2em] text-cyan-400 mb-6">A Space Where I Share:</p>
+              
+              <ul className="space-y-6">
+                {[
+                  { icon: "📝", title: "VALUABLE BLOGS", desc: "Insights, tips & guides to help you grow.", href: "/blog" },
+                  { icon: "🏷️", title: "AFFILIATE DEALS & RECOMMENDATIONS", desc: "Handpicked products & tools I trust.", href: "/products" },
+                  { icon: "💻", title: "WEBSITE DESIGN SERVICES", desc: "Modern, responsive & conversion-focused websites.", href: "/services" },
+                  { icon: "📈", title: "SEO OPTIMIZATION", desc: "Rank higher, get found, grow faster.", href: "/services" }
+                ].map((item, idx) => (
+                  <Link 
+                    key={idx} 
+                    href={item.href} 
+                    className="flex gap-4 group hover:bg-white/5 p-3 -mx-3 rounded-xl transition-all hover:translate-x-2 block reveal-up"
+                    style={{ animationDelay: `${idx * 150}ms` }}
+                  >
+                    <span className="text-2xl group-hover:scale-110 transition-transform">{item.icon}</span>
+                    <div>
+                      <h4 className="text-white font-bold text-sm md:text-base leading-none mb-1 group-hover:text-cyan-400 transition-colors">{item.title}</h4>
+                      <p className="text-gray-400 text-xs md:text-sm group-hover:text-gray-300 transition-colors">{item.desc}</p>
+                    </div>
+                  </Link>
+                ))}
+              </ul>
             </div>
-
-            {/* Stats Bar with Details */}
-            <div className="grid grid-cols-3 gap-6 md:gap-8 pt-8 md:pt-10 border-t border-white/5 max-w-lg mx-auto lg:mx-0">
-              <div className="flex flex-col">
-                <span className="text-2xl md:text-3xl font-black text-white leading-none">{stats.posts}+</span>
-                <span className="text-[8px] md:text-[10px] text-gray-500 font-bold uppercase mt-2 tracking-widest">Post Guides</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-2xl md:text-3xl font-black text-white leading-none">{stats.products}</span>
-                <span className="text-[8px] md:text-[10px] text-gray-500 font-bold uppercase mt-2 tracking-widest">Lab Tests</span>
-              </div>
-              <div className="flex flex-col">
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl md:text-3xl font-black text-white leading-none">99.9%</span>
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
-                  </span>
-                </div>
-                <span className="text-[8px] md:text-[10px] text-gray-500 font-bold uppercase mt-2 tracking-widest">Real-Time Objectivity</span>
-              </div>
+            
+            <div className="flex flex-wrap justify-center lg:justify-start gap-4">
+              <Link href="/services" className="px-8 py-4 rounded-2xl bg-white text-black text-sm font-black transition-all hover:bg-gray-200 hover:scale-105 shadow-[0_10px_40px_rgba(255,255,255,0.2)] flex items-center justify-center gap-2">
+                Grow Your Business <ArrowRight className="w-4 h-4" />
+              </Link>
             </div>
           </div>
 
-          {/* Hero Right: Spotlight Spotlight */}
-          {spotlightProduct && (
-            <div className="hidden lg:block reveal-fade">
-              <div className="relative group">
-                {/* Product Glow Layer */}
-                <div className="absolute -inset-20 bg-primary-600/10 rounded-full blur-[100px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
+          {/* Hero Right: Laptop/UI Mockup */}
+          <div className="block mt-12 lg:mt-0 reveal-fade relative">
+            <div className="absolute -inset-20 bg-primary-600/20 rounded-full blur-[100px] opacity-50 animate-pulse duration-[3s]"></div>
 
-                <div className="relative glass-premium p-10 rounded-[3rem] border-white/20 hover:scale-[1.02] transition-transform duration-500">
-                  <div className="absolute -top-5 -right-5 bg-gradient-to-br from-yellow-400 to-orange-600 text-black px-5 py-2.5 rounded-2xl font-black text-[11px] shadow-2xl z-20 flex items-center gap-2 ring-8 ring-dark-bg uppercase tracking-tighter">
-                    <Award className="w-4 h-4" /> Best in Class
-                  </div>
+            {/* Laptop Screen Mockup */}
+            <div className="relative w-full aspect-[16/10] bg-[#050508] rounded-t-3xl border-[6px] border-gray-800 shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col group">
+              <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.04] to-transparent pointer-events-none z-20"></div>
+              {/* Screen Top Bar */}
+              <div className="h-6 bg-gray-900 w-full flex items-center justify-center relative border-b border-white/5">
+                <div className="w-2 h-2 rounded-full bg-gray-700"></div>
+              </div>
+              
+              {/* Screen Content */}
+              <div className="flex-1 p-8 relative bg-gradient-to-br from-dark-bg to-[#0a0a14] flex flex-col justify-center border-x border-white/5">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 blur-3xl rounded-full"></div>
+                <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary-500/10 blur-3xl rounded-full"></div>
 
-                  <div className="relative aspect-square w-full bg-white rounded-[2rem] mb-10 p-12 overflow-hidden shadow-inner flex items-center justify-center">
-                    <Image
-                      src={getValidImage(spotlightProduct.image)}
-                      alt={spotlightProduct.title}
-                      fill
-                      sizes="(max-width: 1024px) 0px, 450px"
-                      quality={85}
-                      className="object-contain p-8 group-hover:scale-110 transition-transform duration-700"
-                    />
-                    <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-gray-100/50 to-transparent"></div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2">
-                      <div className="flex">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} className={`w-3.5 h-3.5 ${i < 5 ? 'text-yellow-500 fill-yellow-500' : 'text-gray-600'}`} />
-                        ))}
-                      </div>
-                      <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Expert Rating</span>
-                    </div>
-                    <h2 className="text-3xl font-black mb-6">{spotlightProduct.title}</h2>
-                    <AffiliateButton url={spotlightProduct.affiliateLink} text="Check Exclusive Deal" className="w-full py-5 text-base font-black rounded-2xl" />
+                <div className="relative z-10 text-center flex flex-col justify-center h-full">
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black tracking-tighter mb-2 lg:mb-4 text-white drop-shadow-lg leading-tight">
+                    BUILD. RANK. <br className="sm:hidden" /><span className="text-cyan-400">EARN. GROW.</span>
+                  </h2>
+                  <p className="text-[9px] sm:text-xs text-gray-400 max-w-sm mx-auto mb-4 lg:mb-8 leading-relaxed">
+                    Blogs, affiliate deals, website design & SEO solutions.
+                  </p>
+                  
+                  {/* Floating Cards inside screen */}
+                  <div className="grid grid-cols-3 gap-2 lg:gap-3">
+                    <Link href="/blog" className="group bg-white/5 border border-white/10 hover:border-primary-500/50 hover:bg-white/10 rounded-lg lg:rounded-xl p-2 lg:p-3 text-center backdrop-blur-md transition-all hover:-translate-y-1 shadow-lg block flex flex-col items-center justify-center">
+                      <div className="w-5 h-5 lg:w-6 lg:h-6 bg-primary-500/20 group-hover:bg-primary-500/40 rounded-md flex items-center justify-center mb-1 lg:mb-2 transition-colors text-[10px] lg:text-base">📝</div>
+                      <span className="text-[6px] lg:text-[8px] font-black uppercase text-gray-300 group-hover:text-white transition-colors leading-tight">Blogs</span>
+                    </Link>
+                    <Link href="/products" className="group bg-white/5 border border-white/10 hover:border-cyan-500/50 hover:bg-white/10 rounded-lg lg:rounded-xl p-2 lg:p-3 text-center backdrop-blur-md transition-all hover:-translate-y-1 shadow-lg block flex flex-col items-center justify-center">
+                      <div className="w-5 h-5 lg:w-6 lg:h-6 bg-cyan-500/20 group-hover:bg-cyan-500/40 rounded-md flex items-center justify-center mb-1 lg:mb-2 transition-colors text-[10px] lg:text-base">🏷️</div>
+                      <span className="text-[6px] lg:text-[8px] font-black uppercase text-gray-300 group-hover:text-white transition-colors leading-tight">Deals</span>
+                    </Link>
+                    <Link href="/services" className="group bg-white/5 border border-primary-500/30 hover:border-primary-400 hover:bg-primary-500/10 rounded-lg lg:rounded-xl p-2 lg:p-3 text-center backdrop-blur-md transition-all hover:-translate-y-1 shadow-[0_0_15px_rgba(59,130,246,0.2)] block flex flex-col items-center justify-center">
+                      <div className="w-5 h-5 lg:w-6 lg:h-6 bg-primary-500/20 group-hover:bg-primary-500/40 rounded-md flex items-center justify-center mb-1 lg:mb-2 transition-colors text-[10px] lg:text-base">📈</div>
+                      <span className="text-[6px] lg:text-[8px] font-black uppercase text-gray-300 group-hover:text-white transition-colors leading-tight">Services</span>
+                    </Link>
                   </div>
                 </div>
               </div>
             </div>
-          )}
+            
+            {/* Laptop Base */}
+            <div className="relative w-[110%] -ml-[5%] h-5 sm:h-6 bg-gradient-to-b from-gray-400 via-gray-700 to-gray-900 rounded-b-[2rem] shadow-[0_30px_50px_rgba(0,0,0,0.8)] border-t border-gray-400 flex justify-center items-start">
+              <div className="w-24 sm:w-32 h-1 sm:h-1.5 bg-gray-800 rounded-b-md shadow-inner"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Bottom Info Banner */}
+      <section className="bg-gradient-to-r from-primary-900/20 via-dark-bg to-cyan-900/20 border-y border-white/10 py-10 px-4 relative z-20">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="flex flex-col gap-2 shrink-0 text-center md:text-left">
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">If you're looking to:</span>
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 mt-2">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-cyan-500/20 flex items-center justify-center border border-cyan-500/30">💻</div>
+                <span className="text-xs font-bold text-white max-w-[120px] leading-tight">BUILD A PROFESSIONAL WEBSITE</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-primary-500/20 flex items-center justify-center border border-primary-500/30">📈</div>
+                <span className="text-xs font-bold text-white max-w-[120px] leading-tight">RANK HIGHER ON GOOGLE</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center border border-purple-500/30">🛍️</div>
+                <span className="text-xs font-bold text-white max-w-[120px] leading-tight">DISCOVER USEFUL PRODUCTS</span>
+              </div>
+            </div>
+          </div>
+          
+          <div className="h-px w-full md:w-px md:h-16 bg-white/10"></div>
+
+          <div className="text-center md:text-right">
+            <h3 className="text-lg md:text-xl font-black text-white mb-1">YOU'RE IN THE RIGHT PLACE.</h3>
+            <p className="text-[10px] text-gray-400 mb-2 uppercase tracking-widest">THIS IS JUST THE BEGINNING...</p>
+            <p className="text-xs font-black italic text-cyan-400 flex items-center justify-center md:justify-end gap-1">BIGGER THINGS COMING SOON! <span className="text-base">🔥</span></p>
+          </div>
         </div>
       </section>
 
