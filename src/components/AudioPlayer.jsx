@@ -71,12 +71,14 @@ export default function AudioPlayer({ textToRead }) {
           onClick={stopAudio}
           className="p-2 rounded-lg hover:bg-white/10 text-gray-400 hover:text-white transition-colors"
           disabled={!isPlaying && !window.speechSynthesis.paused}
+          aria-label="Stop audio summary"
         >
           <Square className="w-4 h-4 fill-current" />
         </button>
         <button 
           onClick={togglePlay}
           className="w-10 h-10 rounded-xl bg-primary-600 hover:bg-primary-500 flex items-center justify-center text-white transition-all shadow-glow"
+          aria-label={isPlaying ? "Pause audio summary" : "Play audio summary"}
         >
           {isPlaying ? <Pause className="w-5 h-5 fill-current" /> : <Play className="w-5 h-5 fill-current ml-1" />}
         </button>

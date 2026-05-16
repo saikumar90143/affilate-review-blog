@@ -47,6 +47,14 @@ export default function AdminPosts() {
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
 
+  // Auto-scroll to top on error/success for mobile visibility
+  useEffect(() => {
+    if (error || success) {
+      const content = document.getElementById("drawer-content");
+      if (content) content.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [error, success]);
+
   const openCreate = () => {
     setForm(blank); setError(null); setSuccess(null);
     setIsEdit(false); setEditId(null); setDrawerOpen(true);
@@ -207,7 +215,7 @@ export default function AdminPosts() {
       </div>
 
       {/* Table */}
-      <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+      <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-x-auto">
         <table className="w-full text-left">
           <thead>
             <tr className="bg-gray-900/60 border-b border-gray-700 text-gray-400 text-sm">

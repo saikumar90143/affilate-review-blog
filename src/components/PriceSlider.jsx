@@ -84,6 +84,7 @@ export default function PriceSlider({ products }) {
                 step={5000}
                 value={priceRange}
                 onChange={(e) => setPriceRange(parseInt(e.target.value))}
+                aria-label="Filter products by price range"
                 className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-primary-500 hover:accent-primary-400 transition-all focus:outline-none"
                 style={{
                     background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${(priceRange - bounds.min) / (bounds.max - bounds.min) * 100}%, rgba(255,255,255,0.1) ${(priceRange - bounds.min) / (bounds.max - bounds.min) * 100}%, rgba(255,255,255,0.1) 100%)`

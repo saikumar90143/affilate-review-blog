@@ -32,9 +32,15 @@ export async function generateMetadata({ params }) {
   const product = await Product.findOne({ slug }).lean();
   if (!product) return {};
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://elitereviews.in';
+  const url = `${siteUrl}/reviews/${slug}`;
+
   return {
     title: `Review: ${product.title} | EliteReviews`,
     description: product.description || `Comprehensive review and expert analysis for ${product.title}. Rated ${product.rating}/5.`,
+    alternates: {
+      canonical: url,
+    },
     openGraph: {
       title: `${product.title} — Expert Review`,
       description: `Rated ${product.rating}/5 stars by our experts.`,

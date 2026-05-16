@@ -29,10 +29,10 @@ export default function Drawer({ open, onClose, title, children }) {
       />
 
       {/* Centered Modal - Glass Premium */}
-      <div className={`fixed inset-0 z-[70] flex items-center justify-center p-4 sm:p-6 lg:p-8 pointer-events-none transition-all duration-200 ${open ? "opacity-100" : "opacity-0 delay-100"}`}>
+      <div className={`fixed inset-0 z-[70] flex items-center justify-center p-0 sm:p-6 lg:p-8 pointer-events-none transition-all duration-200 ${open ? "opacity-100" : "opacity-0 delay-100"}`}>
         <aside
           ref={drawerRef}
-          className={`relative w-full max-w-5xl max-h-[95vh] bg-[#0a0a0a]/95 border border-white/10 rounded-[2rem] shadow-[0_0_80px_rgba(0,0,0,0.8)]
+          className={`relative w-full max-w-5xl h-full sm:h-auto sm:max-h-[95vh] bg-[#0a0a0a]/95 border-y sm:border border-white/10 sm:rounded-[2rem] shadow-[0_0_80px_rgba(0,0,0,0.8)]
             flex flex-col overflow-hidden pointer-events-auto transition-transform duration-300 ease-out
             ${open ? "scale-100 translate-y-0" : "scale-95 translate-y-4"}`}
           role="dialog"
@@ -40,19 +40,19 @@ export default function Drawer({ open, onClose, title, children }) {
           aria-label={title}
         >
           {/* Header - High Fidelity */}
-          <div className="flex items-center justify-between px-8 py-6 border-b border-white/5 shrink-0 bg-black/80 backdrop-blur-md z-10">
+          <div className="flex items-center justify-between px-6 py-4 sm:px-8 sm:py-6 border-b border-white/5 shrink-0 bg-black/80 backdrop-blur-md z-10">
             <div className="flex items-center gap-4">
                <button 
                  onClick={onClose}
-                 className="p-2.5 rounded-xl bg-white/5 text-gray-400 hover:text-white hover:bg-white/10 transition-all border border-white/5 md:hidden"
+                 className="p-2 rounded-xl bg-white/5 text-gray-400 hover:text-white hover:bg-white/10 transition-all border border-white/5 md:hidden"
                >
                  <ArrowLeft className="w-5 h-5" />
                </button>
-               <h2 className="text-2xl font-black tracking-tighter premium-gradient">{title}</h2>
+               <h2 className="text-xl sm:text-2xl font-black tracking-tighter premium-gradient">{title}</h2>
             </div>
             <button
               onClick={onClose}
-              className="p-3 rounded-2xl bg-white/5 text-gray-400 hover:text-white hover:bg-red-500/20 hover:border-red-500/30 transition-all border border-white/10 group"
+              className="p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-white/5 text-gray-400 hover:text-white hover:bg-red-500/20 hover:border-red-500/30 transition-all border border-white/10 group"
               aria-label="Close popup"
             >
               <X className="w-5 h-5 group-hover:rotate-90 transition-transform" />
@@ -60,7 +60,7 @@ export default function Drawer({ open, onClose, title, children }) {
           </div>
 
           {/* Scrollable Content - Boutique Scrollbar */}
-          <div className="flex-1 overflow-y-auto px-8 py-8 custom-scrollbar overscroll-contain transform-gpu">
+          <div id="drawer-content" className="flex-1 overflow-y-auto px-6 py-6 sm:px-8 sm:py-8 custom-scrollbar overscroll-contain transform-gpu">
             <div className="mx-auto">
                {children}
             </div>

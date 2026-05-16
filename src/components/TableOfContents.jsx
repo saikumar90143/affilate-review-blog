@@ -69,6 +69,8 @@ export default function TableOfContents({ htmlContent }) {
       <div className="lg:hidden">
         <button
           onClick={() => setIsOpen(!isOpen)}
+          aria-expanded={isOpen}
+          aria-label="Toggle Table of Contents"
           className="w-full flex items-center justify-between p-5 glass rounded-[1.5rem] border border-white/10 text-left shadow-2xl relative overflow-hidden group"
         >
           <div className="absolute inset-0 bg-primary-500/5 group-hover:bg-primary-500/10 transition-colors" />

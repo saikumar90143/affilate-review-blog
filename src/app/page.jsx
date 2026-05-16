@@ -18,7 +18,9 @@ const ServicesSection = dynamic(() => import("@/components/ServicesSection"));
 
 export const revalidate = 60;
 
-const getValidImage = (src) => src || "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+import { getPlaceholder } from "@/lib/placeholders";
+
+const getValidImage = (src) => src || getPlaceholder(800, 600);
 
 export default async function Home() {
   let latestPosts = [];
@@ -134,7 +136,7 @@ export default async function Home() {
                   >
                     <span className="text-2xl group-hover:scale-110 transition-transform">{item.icon}</span>
                     <div>
-                      <h4 className="text-white font-bold text-sm md:text-base leading-none mb-1 group-hover:text-cyan-400 transition-colors">{item.title}</h4>
+                      <h2 className="text-white font-bold text-sm md:text-base leading-none mb-1 group-hover:text-cyan-400 transition-colors">{item.title}</h2>
                       <p className="text-gray-400 text-xs md:text-sm group-hover:text-gray-300 transition-colors">{item.desc}</p>
                     </div>
                   </Link>
@@ -255,6 +257,7 @@ export default async function Home() {
                       fill
                       sizes="(max-width: 1024px) 100vw, 55vw"
                       quality={80}
+                      priority
                       className="object-cover group-hover:scale-105 transition-transform duration-[2s]"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-dark-bg/90 via-dark-bg/20 to-transparent"></div>
@@ -304,7 +307,7 @@ export default async function Home() {
               {/* CTA Card */}
               <div className="p-6 md:p-10 rounded-[1.5rem] md:rounded-[3rem] bg-premium-mesh border border-white/10 mt-6 md:mt-auto relative overflow-hidden group hover:border-white/20 transition-all">
                 <div className="relative z-10">
-                  <h5 className="text-lg md:text-xl font-black mb-1 md:mb-2 text-white">Want to see more?</h5>
+                  <h4 className="text-lg md:text-xl font-black mb-1 md:mb-2 text-white">Want to see more?</h4>
                   <p className="text-xs md:text-sm text-gray-400 mb-6 md:mb-8 font-light leading-relaxed">Join the inner circle. Access our full historical archive of deep-dive tech reports.</p>
                   <Link href="/blog" className="flex items-center gap-2 text-white font-black text-[10px] md:text-xs uppercase tracking-[0.2em] group w-max">
                     Browse Archive <ArrowRight className="w-3 h-3 md:w-4 md:h-4 group-hover:translate-x-1 transition-transform" />

@@ -92,7 +92,7 @@ export default function SearchOverlay({ isOpen, onClose }) {
             <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-lg border border-white/10 text-[10px] font-black tracking-widest text-gray-500 uppercase">
               <CornerDownLeft className="w-3 h-3" /> Enter
             </div>
-            <button onClick={onClose} className="ml-6 p-2 rounded-xl hover:bg-white/5 transition-colors text-gray-500">
+            <button onClick={onClose} className="ml-6 p-2 rounded-xl hover:bg-white/5 transition-colors text-gray-500" aria-label="Close search">
               <X className="w-6 h-6" />
             </button>
           </div>

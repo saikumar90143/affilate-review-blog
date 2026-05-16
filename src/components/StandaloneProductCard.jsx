@@ -49,6 +49,7 @@ export default function StandaloneProductCard({ product, postSlug, badge }) {
             {/* Compare Toggle */}
             <button
               onClick={() => toggleProduct(product._id.toString())}
+              aria-label={isSelected ? "Remove from comparison" : "Add to comparison"}
               className={`absolute top-4 left-4 p-3 rounded-2xl border transition-all flex items-center gap-2 text-[10px] font-black uppercase tracking-widest shadow-xl
                 ${isSelected
                   ? "bg-primary-600 border-primary-500 text-white scale-105"

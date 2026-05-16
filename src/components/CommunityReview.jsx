@@ -90,20 +90,21 @@ export default function CommunityReview({ productId }) {
           <div className="mb-4">
             <label className="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Tap to Rate</label>
             <div className="flex gap-1">
-              {[1,2,3,4,5].map((star) => (
-                <button
-                  type="button"
-                  key={star}
-                  onClick={() => setRating(star)}
-                  onMouseEnter={() => setHoverRating(star)}
-                  onMouseLeave={() => setHoverRating(0)}
-                  className="p-1 focus:outline-none"
-                >
-                  <Star className={`w-8 h-8 transition-colors ${
-                    star <= (hoverRating || rating) ? 'fill-yellow-500 text-yellow-500' : 'text-gray-600'
-                  }`} />
-                </button>
-              ))}
+               {[1,2,3,4,5].map((star) => (
+                 <button
+                   type="button"
+                   key={star}
+                   onClick={() => setRating(star)}
+                   onMouseEnter={() => setHoverRating(star)}
+                   onMouseLeave={() => setHoverRating(0)}
+                   className="p-1 focus:outline-none"
+                   aria-label={`Rate ${star} star${star > 1 ? 's' : ''}`}
+                 >
+                   <Star className={`w-8 h-8 transition-colors ${
+                     star <= (hoverRating || rating) ? 'fill-yellow-500 text-yellow-500' : 'text-gray-600'
+                   }`} />
+                 </button>
+               ))}
             </div>
           </div>
           
@@ -113,6 +114,7 @@ export default function CommunityReview({ productId }) {
               placeholder="Your Name (Optional)" 
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              aria-label="Your Name (Optional)"
               className="bg-[#050508] border border-white/10 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-primary-500"
             />
           </div>

@@ -28,7 +28,7 @@ export default function SummaryCard({ title, items = [], bottomLine = "" }) {
                 </li>
               ))}
               {items.length === 0 && (
-                <p className="text-gray-500 text-sm italic">Scanning for key data points...</p>
+                <li className="text-gray-500 text-sm italic list-none">Scanning for key data points...</li>
               )}
             </ul>
           </div>

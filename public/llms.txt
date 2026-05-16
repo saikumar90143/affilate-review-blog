@@ -1,0 +1,21 @@
+# Affiliate Review Blog
+
+A comprehensive blog for affiliate reviews, product comparisons, and shopping guides.
+
+## Core Features
+- Product Reviews
+- Product Comparisons
+- Category-based Browsing
+- Watchlist Management
+- Search Functionality
+
+## Technology Stack
+- Next.js (App Router)
+- React
+- CSS (Vanilla)
+- MongoDB (presumably, based on 'models' directory)
+
+## SEO Structure
+- Dynamic Metadata
+- Sitemap and Robots.txt
+- Semantic HTML

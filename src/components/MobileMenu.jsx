@@ -57,15 +57,15 @@ export default function MobileMenu({ isOpen, onClose }) {
 
         {/* Boutique Footer Segment */}
         <div className="pt-10 border-t border-white/5 flex flex-col items-center gap-8">
-           <div className="flex gap-8 text-gray-500">
-              <Globe className="w-5 h-5 hover:text-white transition-colors" />
-              <Code className="w-5 h-5 hover:text-white transition-colors" />
-              <Cpu className="w-5 h-5 hover:text-white transition-colors" />
-              <Mail className="w-5 h-5 hover:text-white transition-colors" />
-           </div>
-           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-700">
-             © 2026 EliteReviews Edition
-           </p>
+            <div className="flex gap-8 text-gray-400">
+               <Link href="#" aria-label="Global Network"><Globe className="w-5 h-5 hover:text-white transition-colors" /></Link>
+               <Link href="#" aria-label="Source Code"><Code className="w-5 h-5 hover:text-white transition-colors" /></Link>
+               <Link href="#" aria-label="System Intelligence"><Cpu className="w-5 h-5 hover:text-white transition-colors" /></Link>
+               <Link href="#" aria-label="Contact Inquiries"><Mail className="w-5 h-5 hover:text-white transition-colors" /></Link>
+            </div>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">
+              © 2026 EliteReviews Edition
+            </p>
         </div>
       </div>
     </div>

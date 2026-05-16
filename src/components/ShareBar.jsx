@@ -92,6 +92,7 @@ export default function ShareBar({ title }) {
               onClick={p.onClick}
               className={`p-2 rounded-lg bg-gray-800/50 text-gray-400 transition-all ${p.color}`}
               title={`Share on ${p.name}`}
+              aria-label={`Share on ${p.name}`}
             >
               <Icon className="w-4 h-4" />
             </button>
@@ -106,6 +107,7 @@ export default function ShareBar({ title }) {
             rel="noopener noreferrer"
             className={`p-2 rounded-lg bg-gray-800/50 text-gray-400 transition-all ${p.color}`}
             title={`Share on ${p.name}`}
+            aria-label={`Share on ${p.name}`}
           >
             <Icon className="w-4 h-4" />
           </a>
@@ -116,6 +118,7 @@ export default function ShareBar({ title }) {
         onClick={copyToClipboard}
         className={`p-2 rounded-lg bg-gray-800/50 text-gray-400 transition-all hover:text-green-400 hover:bg-green-400/10`}
         title="Copy Link"
+        aria-label="Copy link to clipboard"
       >
         {copied ? <Check className="w-4 h-4" /> : <LinkIcon className="w-4 h-4" />}
       </button>

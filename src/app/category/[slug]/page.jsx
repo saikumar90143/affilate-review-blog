@@ -14,8 +14,15 @@ export const revalidate = 60;
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
+  await connectToDatabase();
+  const category = await Category.findOne({ slug }).select('name description').lean();
+  
+  const title = category ? `${category.name} | EliteReviews` : `${slug.charAt(0).toUpperCase() + slug.slice(1)} | EliteReviews`;
+  const description = category?.description || `Browse the best products and expert articles in the ${category?.name || slug} category on EliteReviews.`;
+  
   return {
-    title: `${slug.charAt(0).toUpperCase() + slug.slice(1)} | EliteReviews`,
+    title,
+    description,
   };
 }
 

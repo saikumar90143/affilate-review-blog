@@ -62,7 +62,7 @@ export default function ImageUpload({ onUpload, defaultValue = "", label = "Uplo
       <div className="relative group">
         {preview ? (
           <div className="relative aspect-video rounded-xl overflow-hidden border border-gray-700 bg-gray-800">
-            <img src={preview} alt="Preview" className="w-full h-full object-cover" />
+            <img src={preview} alt="Preview" width={800} height={450} className="w-full h-full object-cover" />
             <button
               onClick={removeImage}
               className="absolute top-2 right-2 p-1.5 bg-red-600 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"

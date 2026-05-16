@@ -34,6 +34,8 @@ const ExitIntentPopup = dynamic(() => import("@/components/ExitIntentPopup"));
 
 export const revalidate = 3600;
 
+const getValidImage = (src) => src || getPlaceholder(800, 600);
+
 function calculateReadingTime(content) {
   if (!content) return "1 min read";
   const textContent = content.replace(/<[^>]*>?/gm, "");
@@ -53,19 +55,18 @@ export async function generateMetadata({ params }) {
 
   if (!post) return {};
 
-  const title = post.metaTitle || `${post.title} | ${settings?.siteName || 'EliteReviews'}`;
-  const description = post.metaDescription || post.excerpt;
-  const url = `${process.env.NEXT_PUBLIC_SITE_URL}/blog/${slug}`;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://elitereviews.in';
+  const url = `${siteUrl}/blog/${slug}`;
 
   return {
-    title,
-    description,
+    title: post.metaTitle || post.title,
+    description: post.metaDescription || post.excerpt,
     alternates: {
       canonical: url,
     },
     openGraph: {
-      title,
-      description,
+      title: post.metaTitle || post.title,
+      description: post.metaDescription || post.excerpt,
       url,
       siteName: settings?.siteName || 'EliteReviews',
       images: post.featuredImage ? [{ url: post.featuredImage, width: 1200, height: 630 }] : [],
@@ -74,8 +75,8 @@ export async function generateMetadata({ params }) {
     },
     twitter: {
       card: 'summary_large_image',
-      title,
-      description,
+      title: post.metaTitle || post.title,
+      description: post.metaDescription || post.excerpt,
       images: post.featuredImage ? [post.featuredImage] : [],
     },
   };
