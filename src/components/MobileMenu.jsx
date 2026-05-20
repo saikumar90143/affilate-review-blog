@@ -14,7 +14,6 @@ export default function MobileMenu({ isOpen, onClose }) {
     { label: "Blog",     href: "/blog" },
     { label: "Products", href: "/products" },
     { label: "Compare",  href: "/comparison" },
-    { label: "Services", href: "/services" },
   ];
 
   return (

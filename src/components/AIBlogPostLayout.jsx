@@ -4,16 +4,10 @@ import { format } from "date-fns";
 import TableOfContents from "@/components/TableOfContents";
 import QuickConvertBar from "@/components/QuickConvertBar";
 import { getPlaceholder } from "@/lib/placeholders";
+import AdSlot from "@/components/AdSlot";
+import AffiliateDisclosure from "@/components/AffiliateDisclosure";
 
-const AdSensePlaceholder = ({ position }) => (
-  <div className="w-full bg-gray-900 border border-gray-800 rounded-xl py-8 my-8 flex flex-col items-center justify-center relative overflow-hidden group">
-    <div className="absolute inset-0 bg-[url('/assets/grid-pattern.svg')] opacity-10" />
-    <span className="text-xs font-semibold tracking-wider text-gray-500 uppercase bg-gray-950 px-3 py-1 rounded-full border border-gray-800 relative z-10 mb-2">
-      Advertisement
-    </span>
-    <p className="text-sm text-gray-600 relative z-10">[Google AdSense Space: {position}]</p>
-  </div>
-);
+
 
 export default function AIBlogPostLayout({ blog, relatedPosts, relatedProducts }) {
   const injectHeadingIds = (html) => {
@@ -77,7 +71,8 @@ export default function AIBlogPostLayout({ blog, relatedPosts, relatedProducts }
               </div>
             )}
 
-          <AdSensePlaceholder position="After Intro" />
+          <AffiliateDisclosure />
+          <AdSlot className="my-8 w-full" />
 
           <div className="prose prose-invert prose-lg max-w-none 
             prose-headings:text-white prose-headings:font-bold 
@@ -90,13 +85,13 @@ export default function AIBlogPostLayout({ blog, relatedPosts, relatedProducts }
             dangerouslySetInnerHTML={{ __html: contentWithIds }}
           />
 
-          <AdSensePlaceholder position="End of Article" />
+          <AdSlot className="my-8 w-full" />
           </div>
 
         <aside className="lg:w-80 shrink-0 space-y-8">
           <div className="sticky top-28 space-y-8">
             <TableOfContents htmlContent={contentWithIds} />
-            <AdSensePlaceholder position="Sidebar Display" />
+            <AdSlot className="my-8 w-full" />
             
             {relatedPosts && relatedPosts.length > 0 && (
               <div className="bg-[#0b0b12] border border-white/5 shadow-2xl rounded-3xl p-8 relative overflow-hidden group">

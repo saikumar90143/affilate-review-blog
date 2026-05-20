@@ -60,7 +60,6 @@ export default function Navbar() {
             { label: "Blog", href: "/blog" },
             { label: "Products", href: "/products" },
             { label: "Compare", href: "/comparison" },
-            { label: "Services", href: "/services" },
           ].map((item) => {
             const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
             return (

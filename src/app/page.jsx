@@ -37,7 +37,7 @@ export default async function Home() {
     console.log("[Home] Connected to database");
 
     // Use individual try-catch blocks or localized error handling to prevent one failure from hiding all posts
-    const fetchPosts = Post.find({ isPublished: { $ne: false } }).sort({ createdAt: -1 }).limit(3).populate('category').lean()
+    const fetchPosts = Post.find({ isPublished: { $ne: false } }).sort({ createdAt: -1 }).limit(6).populate('category').lean()
       .catch(e => { console.error("[Home] Posts fetch error:", e); return []; });
 
     const fetchProducts = Product.find({ rating: { $gte: 4.8 } }).sort({ rating: -1 }).limit(4).lean()
@@ -95,141 +95,142 @@ export default async function Home() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-dark-bg text-white overflow-hidden bg-premium-mesh">
-      {/* Hero Section v3 - Ultra Detailed */}
-      <section className="relative min-h-screen flex items-center pt-24 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <div className="flex flex-col min-h-screen bg-dark-bg text-white overflow-hidden">
+
+      {/* Hero Section v3 - Editorial Style */}
+      <section className="relative min-h-screen flex items-center pt-28 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
         {/* Animated Background Asset */}
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none"></div>
-          <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary-600/10 rounded-full blur-[120px] -mr-[400px] -mt-[400px] pointer-events-none animate-pulse duration-[4s]"></div>
-          <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[120px] -ml-[300px] -mb-[300px] pointer-events-none animate-pulse duration-[5s]"></div>
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-dark-bg/80 to-dark-bg"></div>
+        <div className="absolute inset-0 z-0 animate-pulse duration-[8s] opacity-40">
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_80%_60%_at_50%_40%,#000_70%,transparent_100%)] pointer-events-none"></div>
+          <div className="absolute top-0 right-0 w-[900px] h-[900px] bg-primary-600/10 rounded-full blur-[130px] -mr-[450px] -mt-[450px] pointer-events-none"></div>
+          <div className="absolute bottom-0 left-0 w-[700px] h-[700px] bg-cyan-500/10 rounded-full blur-[130px] -ml-[350px] -mb-[350px] pointer-events-none"></div>
         </div>
 
-        <div className="relative z-10 mx-auto max-w-7xl w-full grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center">
+        <div className="relative z-10 mx-auto max-w-7xl w-full grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-12 items-center">
           {/* Hero Left Content */}
-          <div className="text-center lg:text-left reveal-up">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-primary-400 text-[10px] font-black uppercase tracking-[0.2em] mb-6 shadow-glow">
-              🚀 Something Powerful Just Went Live!
+          <div className="lg:col-span-6 text-center lg:text-left reveal-up">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-400 text-[10px] font-black uppercase tracking-[0.25em] mb-8 shadow-glow">
+              📰 Tech Reviews & Articles
             </div>
 
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter mb-8 leading-[1.1] md:leading-[0.95] drop-shadow-2xl">
-              I'VE OFFICIALLY LAUNCHED MY <br />
-              <span className="premium-gradient drop-shadow-[0_0_20px_rgba(59,130,246,0.3)]">WEBSITE 🌐</span>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight mb-6 leading-tight">
+              Honest Product Reviews & <br />
+              <span className="premium-gradient">In-Depth Tech Articles</span>
             </h1>
 
-            <div className="mb-10 text-left bg-white/5 border border-white/10 rounded-[2rem] p-6 sm:p-8 backdrop-blur-sm">
-              <p className="text-sm font-black uppercase tracking-[0.2em] text-cyan-400 mb-6">A Space Where I Share:</p>
-              
-              <ul className="space-y-6">
-                {[
-                  { icon: "📝", title: "VALUABLE BLOGS", desc: "Insights, tips & guides to help you grow.", href: "/blog" },
-                  { icon: "🏷️", title: "AFFILIATE DEALS & RECOMMENDATIONS", desc: "Handpicked products & tools I trust.", href: "/products" },
-                  { icon: "💻", title: "WEBSITE DESIGN SERVICES", desc: "Modern, responsive & conversion-focused websites.", href: "/services" },
-                  { icon: "📈", title: "SEO OPTIMIZATION", desc: "Rank higher, get found, grow faster.", href: "/services" }
-                ].map((item, idx) => (
-                  <Link 
-                    key={idx} 
-                    href={item.href} 
-                    className="flex gap-4 group hover:bg-white/5 p-3 -mx-3 rounded-xl transition-all hover:translate-x-2 block reveal-up"
-                    style={{ animationDelay: `${idx * 150}ms` }}
-                  >
-                    <span className="text-2xl group-hover:scale-110 transition-transform">{item.icon}</span>
-                    <div>
-                      <h2 className="text-white font-bold text-sm md:text-base leading-none mb-1 group-hover:text-cyan-400 transition-colors">{item.title}</h2>
-                      <p className="text-gray-400 text-xs md:text-sm group-hover:text-gray-300 transition-colors">{item.desc}</p>
-                    </div>
-                  </Link>
-                ))}
-              </ul>
-            </div>
+            <p className="text-gray-300 text-base sm:text-lg font-light leading-relaxed max-w-xl mb-8 mx-auto lg:mx-0">
+              We test the latest hardware and tech gadgets to bring you completely unbiased reviews, comparisons, and helpful articles to guide your buying decisions.
+            </p>
             
             <div className="flex flex-wrap justify-center lg:justify-start gap-4">
-              <Link href="/services" className="px-8 py-4 rounded-2xl bg-white text-black text-sm font-black transition-all hover:bg-gray-200 hover:scale-105 shadow-[0_10px_40px_rgba(255,255,255,0.2)] flex items-center justify-center gap-2">
-                Grow Your Business <ArrowRight className="w-4 h-4" />
+              <Link href="/blog" className="px-8 py-4 rounded-2xl bg-white text-black text-sm font-black transition-all hover:bg-gray-200 hover:scale-105 shadow-[0_10px_40px_rgba(255,255,255,0.15)] flex items-center justify-center gap-2">
+                View Articles <ArrowRight className="w-4 h-4" />
               </Link>
+              <Link href="/products" className="px-8 py-4 rounded-2xl bg-white/5 border border-white/10 text-white text-sm font-black transition-all hover:bg-white/10 hover:scale-105 flex items-center justify-center gap-2">
+                Compare Products
+              </Link>
+            </div>
+            
+            {/* Stats grid */}
+            <div className="grid grid-cols-3 gap-6 pt-12 mt-12 border-t border-white/5 text-center lg:text-left max-w-md mx-auto lg:mx-0">
+              <div>
+                <p className="text-3xl font-black text-white">{stats.posts || 12}+</p>
+                <p className="text-[10px] uppercase font-bold tracking-widest text-gray-500 mt-1">Articles</p>
+              </div>
+              <div>
+                <p className="text-3xl font-black text-cyan-400">50K+</p>
+                <p className="text-[10px] uppercase font-bold tracking-widest text-gray-500 mt-1">Weekly Readers</p>
+              </div>
+              <div>
+                <p className="text-3xl font-black text-primary-400">{stats.products || 8}+</p>
+                <p className="text-[10px] uppercase font-bold tracking-widest text-gray-500 mt-1">Reviewed Products</p>
+              </div>
             </div>
           </div>
 
-          {/* Hero Right: Laptop/UI Mockup */}
-          <div className="block mt-12 lg:mt-0 reveal-fade relative">
-            <div className="absolute -inset-20 bg-primary-600/20 rounded-full blur-[100px] opacity-50 animate-pulse duration-[3s]"></div>
-
-            {/* Laptop Screen Mockup */}
-            <div className="relative w-full aspect-[16/10] bg-[#050508] rounded-t-3xl border-[6px] border-gray-800 shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col group">
-              <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.04] to-transparent pointer-events-none z-20"></div>
-              {/* Screen Top Bar */}
-              <div className="h-6 bg-gray-900 w-full flex items-center justify-center relative border-b border-white/5">
-                <div className="w-2 h-2 rounded-full bg-gray-700"></div>
-              </div>
-              
-              {/* Screen Content */}
-              <div className="flex-1 p-8 relative bg-gradient-to-br from-dark-bg to-[#0a0a14] flex flex-col justify-center border-x border-white/5">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 blur-3xl rounded-full"></div>
-                <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary-500/10 blur-3xl rounded-full"></div>
-
-                <div className="relative z-10 text-center flex flex-col justify-center h-full">
-                  <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black tracking-tighter mb-2 lg:mb-4 text-white drop-shadow-lg leading-tight">
-                    BUILD. RANK. <br className="sm:hidden" /><span className="text-cyan-400">EARN. GROW.</span>
-                  </h2>
-                  <p className="text-[9px] sm:text-xs text-gray-400 max-w-sm mx-auto mb-4 lg:mb-8 leading-relaxed">
-                    Blogs, affiliate deals, website design & SEO solutions.
-                  </p>
+          {/* Hero Right: Featured Cover Story */}
+          <div className="lg:col-span-6 reveal-fade relative">
+            <div className="absolute -inset-10 bg-primary-600/10 rounded-full blur-[100px] pointer-events-none" />
+            
+            {latestPosts[0] ? (
+              <div className="relative group max-w-xl mx-auto lg:mx-0">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-primary-500 to-cyan-500 rounded-3xl blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
+                
+                <div className="relative bg-[#0d0d15] border border-white/10 rounded-3xl overflow-hidden shadow-2xl flex flex-col">
+                  <div className="relative aspect-[16/10] w-full overflow-hidden">
+                    <Image
+                      src={getValidImage(latestPosts[0].featuredImage)}
+                      alt={latestPosts[0].title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
+                      quality={85}
+                      className="object-cover group-hover:scale-105 transition-transform duration-[2s] ease-out"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d15] via-transparent to-transparent" />
+                    <span className="absolute top-4 left-4 px-3 py-1 bg-primary-600 border border-primary-500/20 text-white rounded-full text-[9px] font-black uppercase tracking-widest shadow-glow">
+                      Featured Cover Story
+                    </span>
+                  </div>
                   
-                  {/* Floating Cards inside screen */}
-                  <div className="grid grid-cols-3 gap-2 lg:gap-3">
-                    <Link href="/blog" className="group bg-white/5 border border-white/10 hover:border-primary-500/50 hover:bg-white/10 rounded-lg lg:rounded-xl p-2 lg:p-3 text-center backdrop-blur-md transition-all hover:-translate-y-1 shadow-lg block flex flex-col items-center justify-center">
-                      <div className="w-5 h-5 lg:w-6 lg:h-6 bg-primary-500/20 group-hover:bg-primary-500/40 rounded-md flex items-center justify-center mb-1 lg:mb-2 transition-colors text-[10px] lg:text-base">📝</div>
-                      <span className="text-[6px] lg:text-[8px] font-black uppercase text-gray-300 group-hover:text-white transition-colors leading-tight">Blogs</span>
-                    </Link>
-                    <Link href="/products" className="group bg-white/5 border border-white/10 hover:border-cyan-500/50 hover:bg-white/10 rounded-lg lg:rounded-xl p-2 lg:p-3 text-center backdrop-blur-md transition-all hover:-translate-y-1 shadow-lg block flex flex-col items-center justify-center">
-                      <div className="w-5 h-5 lg:w-6 lg:h-6 bg-cyan-500/20 group-hover:bg-cyan-500/40 rounded-md flex items-center justify-center mb-1 lg:mb-2 transition-colors text-[10px] lg:text-base">🏷️</div>
-                      <span className="text-[6px] lg:text-[8px] font-black uppercase text-gray-300 group-hover:text-white transition-colors leading-tight">Deals</span>
-                    </Link>
-                    <Link href="/services" className="group bg-white/5 border border-primary-500/30 hover:border-primary-400 hover:bg-primary-500/10 rounded-lg lg:rounded-xl p-2 lg:p-3 text-center backdrop-blur-md transition-all hover:-translate-y-1 shadow-[0_0_15px_rgba(59,130,246,0.2)] block flex flex-col items-center justify-center">
-                      <div className="w-5 h-5 lg:w-6 lg:h-6 bg-primary-500/20 group-hover:bg-primary-500/40 rounded-md flex items-center justify-center mb-1 lg:mb-2 transition-colors text-[10px] lg:text-base">📈</div>
-                      <span className="text-[6px] lg:text-[8px] font-black uppercase text-gray-300 group-hover:text-white transition-colors leading-tight">Services</span>
+                  <div className="p-8">
+                    <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest text-gray-500 mb-4">
+                      <span className="text-primary-400">{latestPosts[0].category?.name || "Editorial"}</span>
+                      <span className="w-1 h-1 rounded-full bg-gray-700"></span>
+                      <span>{new Date(latestPosts[0].createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                    </div>
+                    
+                    <h3 className="text-2xl sm:text-3xl font-black mb-4 leading-tight text-white group-hover:text-primary-400 transition-colors line-clamp-2">
+                      {latestPosts[0].title}
+                    </h3>
+                    
+                    <p className="text-gray-400 text-sm font-light leading-relaxed line-clamp-2 mb-6">
+                      {latestPosts[0].summary || latestPosts[0].excerpt}
+                    </p>
+                    
+                    <Link href={`/blog/${latestPosts[0].slug}`} className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-wider text-primary-400 group-hover:text-white transition-colors">
+                      Read Cover Story <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </Link>
                   </div>
                 </div>
               </div>
-            </div>
-            
-            {/* Laptop Base */}
-            <div className="relative w-[110%] -ml-[5%] h-5 sm:h-6 bg-gradient-to-b from-gray-400 via-gray-700 to-gray-900 rounded-b-[2rem] shadow-[0_30px_50px_rgba(0,0,0,0.8)] border-t border-gray-400 flex justify-center items-start">
-              <div className="w-24 sm:w-32 h-1 sm:h-1.5 bg-gray-800 rounded-b-md shadow-inner"></div>
-            </div>
+            ) : (
+              <div className="relative bg-[#0d0d15] border border-white/10 rounded-3xl p-12 text-center flex flex-col items-center justify-center min-h-[350px] max-w-xl mx-auto lg:mx-0">
+                <p className="text-gray-400">Welcome to EliteReviews. No articles have been published yet.</p>
+                <Link href="/blog" className="mt-6 px-6 py-3 bg-primary-600 text-white rounded-xl text-xs font-black uppercase tracking-widest">
+                  Visit Article Archives
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </section>
 
-      {/* Bottom Info Banner */}
-      <section className="bg-gradient-to-r from-primary-900/20 via-dark-bg to-cyan-900/20 border-y border-white/10 py-10 px-4 relative z-20">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="flex flex-col gap-2 shrink-0 text-center md:text-left">
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">If you're looking to:</span>
-            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 mt-2">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-cyan-500/20 flex items-center justify-center border border-cyan-500/30">💻</div>
-                <span className="text-xs font-bold text-white max-w-[120px] leading-tight">BUILD A PROFESSIONAL WEBSITE</span>
+      {/* Bottom Editorial Banner */}
+      <section className="bg-gradient-to-r from-primary-900/10 via-dark-bg to-cyan-900/10 border-y border-white/5 py-8 px-4 relative z-20">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex flex-col gap-1 shrink-0 text-center md:text-left">
+            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-500">Uncompromising Laboratory Testing Standards</span>
+            <div className="flex flex-col sm:flex-row gap-4 mt-2">
+              <div className="flex items-center gap-2 justify-center sm:justify-start">
+                <span className="text-base">🧪</span>
+                <span className="text-[10px] font-bold text-gray-300 uppercase tracking-wider">Independent Testing Labs</span>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-primary-500/20 flex items-center justify-center border border-primary-500/30">📈</div>
-                <span className="text-xs font-bold text-white max-w-[120px] leading-tight">RANK HIGHER ON GOOGLE</span>
+              <div className="flex items-center gap-2 justify-center sm:justify-start">
+                <span className="text-base">🔬</span>
+                <span className="text-[10px] font-bold text-gray-300 uppercase tracking-wider">Data-Driven Ratings</span>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center border border-purple-500/30">🛍️</div>
-                <span className="text-xs font-bold text-white max-w-[120px] leading-tight">DISCOVER USEFUL PRODUCTS</span>
+              <div className="flex items-center gap-2 justify-center sm:justify-start">
+                <span className="text-base">🛡️</span>
+                <span className="text-[10px] font-bold text-gray-300 uppercase tracking-wider">100% Sponsor-Free Reviews</span>
               </div>
             </div>
           </div>
           
-          <div className="h-px w-full md:w-px md:h-16 bg-white/10"></div>
+          <div className="hidden md:block h-10 w-px bg-white/10"></div>
 
           <div className="text-center md:text-right">
-            <h3 className="text-lg md:text-xl font-black text-white mb-1">YOU'RE IN THE RIGHT PLACE.</h3>
-            <p className="text-[10px] text-gray-400 mb-2 uppercase tracking-widest">THIS IS JUST THE BEGINNING...</p>
-            <p className="text-xs font-black italic text-cyan-400 flex items-center justify-center md:justify-end gap-1">BIGGER THINGS COMING SOON! <span className="text-base">🔥</span></p>
+            <h3 className="text-sm font-black text-white uppercase tracking-widest">No Bias. No Brand Deals. Just Facts.</h3>
+            <p className="text-[9px] text-gray-500 mt-1 uppercase tracking-widest">Built for the demanding tech enthusiast.</p>
           </div>
         </div>
       </section>
@@ -238,19 +239,48 @@ export default async function Home() {
       <PriceSlider products={pricedProducts} />
 
       {/* Magazine Blog Feed - High Fidelity */}
-      <section className="py-20 md:py-32 px-4 bg-dark-bg/80 relative">
+      <section className="py-20 md:py-32 px-4 bg-[#07070a]/60 border-t border-white/5 relative">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-6 mb-16 md:mb-20 reveal-up">
-            <h2 className="text-4xl md:text-5xl font-black tracking-tighter">Latest Gear Reviews</h2>
-            <div className="flex-1 h-px bg-white/5"></div>
+            <h2 className="text-4xl md:text-5xl font-black tracking-tighter">Latest Gear & Tech Intel</h2>
+            <div className="flex-1 h-px bg-white/10"></div>
+            <Link href="/blog" className="text-xs font-black uppercase tracking-widest text-primary-400 hover:text-white transition-colors shrink-0">
+              View All Articles →
+            </Link>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-16">
-            {/* Left Column: Big Featured */}
-            {latestPosts[0] && (
+            {/* Left Column: Big Featured (2nd latest post) */}
+            {latestPosts[1] ? (
+              <div className="lg:col-span-7 reveal-up">
+                <Link href={`/blog/${latestPosts[1].slug}`} className="group block h-full">
+                  <div className="relative aspect-[4/3] sm:aspect-[16/10] w-full rounded-3xl overflow-hidden border border-white/10 mb-6 md:mb-8 shadow-2xl">
+                    <Image
+                      src={getValidImage(latestPosts[1].featuredImage)}
+                      alt={latestPosts[1].title}
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 55vw"
+                      quality={80}
+                      priority
+                      className="object-cover group-hover:scale-105 transition-transform duration-[2s]"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-dark-bg/95 via-dark-bg/25 to-transparent"></div>
+                    <div className="absolute bottom-6 left-6 right-6 md:bottom-8 md:left-8 md:right-8">
+                      <span className="px-3 py-1 bg-cyan-600 border border-cyan-500/20 rounded-lg text-[8px] md:text-[9px] font-black uppercase tracking-widest shadow-xl">Recent Release</span>
+                      <h3 className="text-2xl md:text-3xl font-black mt-4 leading-tight group-hover:text-primary-400 transition-colors line-clamp-2">{latestPosts[1].title}</h3>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 md:gap-4 text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest px-2">
+                    <span className="text-primary-400">{latestPosts[1].category?.name}</span>
+                    <span className="w-1.5 h-1.5 bg-gray-800 rounded-full"></span>
+                    <span>{new Date(latestPosts[1].createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                  </div>
+                </Link>
+              </div>
+            ) : latestPosts[0] ? (
               <div className="lg:col-span-7 reveal-up">
                 <Link href={`/blog/${latestPosts[0].slug}`} className="group block h-full">
-                  <div className="relative aspect-[4/3] sm:aspect-[16/10] w-full rounded-[2rem] md:rounded-[3.5rem] overflow-hidden border border-white/5 mb-6 md:mb-10 shadow-2xl">
+                  <div className="relative aspect-[4/3] sm:aspect-[16/10] w-full rounded-3xl overflow-hidden border border-white/10 mb-6 md:mb-8 shadow-2xl">
                     <Image
                       src={getValidImage(latestPosts[0].featuredImage)}
                       alt={latestPosts[0].title}
@@ -260,60 +290,84 @@ export default async function Home() {
                       priority
                       className="object-cover group-hover:scale-105 transition-transform duration-[2s]"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-dark-bg/90 via-dark-bg/20 to-transparent"></div>
-                    <div className="absolute bottom-6 left-6 right-6 md:bottom-10 md:left-10 md:right-10">
-                      <span className="px-3 md:px-4 py-1.5 md:py-2 bg-primary-600 rounded-lg md:rounded-xl text-[8px] md:text-[10px] font-black uppercase tracking-widest shadow-xl">Featured Report</span>
-                      <h3 className="text-2xl md:text-4xl font-black mt-4 md:mt-6 leading-tight group-hover:text-primary-400 transition-colors line-clamp-3">{latestPosts[0].title}</h3>
+                    <div className="absolute inset-0 bg-gradient-to-t from-dark-bg/95 via-dark-bg/25 to-transparent"></div>
+                    <div className="absolute bottom-6 left-6 right-6 md:bottom-8 md:left-8 md:right-8">
+                      <span className="px-3 py-1 bg-cyan-600 border border-cyan-500/20 rounded-lg text-[8px] md:text-[9px] font-black uppercase tracking-widest shadow-xl">Recent Release</span>
+                      <h3 className="text-2xl md:text-3xl font-black mt-4 leading-tight group-hover:text-primary-400 transition-colors line-clamp-2">{latestPosts[0].title}</h3>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 md:gap-4 text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest px-2 md:px-4">
-                    <span className="text-primary-500">{latestPosts[0].category?.name}</span>
-                    <span className="w-1 md:w-1.5 h-1 md:h-1.5 bg-gray-800 rounded-full"></span>
-                    <span>8 Min Read</span>
+                  <div className="flex items-center gap-3 md:gap-4 text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest px-2">
+                    <span className="text-primary-400">{latestPosts[0].category?.name}</span>
+                    <span className="w-1.5 h-1.5 bg-gray-800 rounded-full"></span>
+                    <span>{new Date(latestPosts[0].createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                   </div>
                 </Link>
               </div>
+            ) : (
+              <div className="lg:col-span-7 bg-[#0b0b12] rounded-3xl border border-white/5 p-12 text-center flex items-center justify-center min-h-[300px]">
+                <p className="text-gray-500">Stay tuned for upcoming editorial reports!</p>
+              </div>
             )}
 
-            {/* Right Column: Mini Feed */}
+            {/* Right Column: Mini Feed of rest of the posts */}
             <div className="lg:col-span-5 flex flex-col justify-between gap-4 md:gap-6">
-              {latestPosts.slice(1).map((post, i) => (
-                <Link
-                  key={post._id.toString()}
-                  href={`/blog/${post.slug}`}
-                  className="group bg-[#0b0b12] rounded-[1.5rem] md:rounded-[2.5rem] border border-white/5 p-3 md:p-4 flex gap-4 md:gap-6 items-center hover:border-primary-500/30 overflow-hidden hover:shadow-[0_10px_40px_rgba(59,130,246,0.1)] transition-all duration-500 hover:-translate-y-1 relative"
-                  style={{ transitionDelay: `${(i + 1) * 100}ms` }}
-                >
-                  {/* Hover glow inside card */}
-                  <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-primary-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
-
-                  <div className="relative w-24 h-24 md:w-32 md:h-32 rounded-[1rem] md:rounded-[1.5rem] overflow-hidden bg-[#050508] shrink-0 border border-white/5 z-10 shadow-inner">
-                    <Image src={getValidImage(post.featuredImage)} alt={post.title} fill sizes="(max-width: 640px) 96px, 128px" quality={75} className="object-cover transition-transform group-hover:scale-110 duration-700" />
-                  </div>
-                  <div className="flex-1 py-1 md:py-2 relative z-10">
-                    <div className="flex items-center gap-2 mb-1.5 md:mb-2">
-                      <span className="w-1 md:w-1.5 h-1 md:h-1.5 rounded-full bg-primary-500"></span>
-                      <span className="text-primary-400 font-black text-[8px] md:text-[9px] uppercase tracking-[0.2em]">{post.category?.name}</span>
+              {latestPosts.length > 2 ? (
+                latestPosts.slice(2, 5).map((post, i) => (
+                  <Link
+                    key={post._id.toString()}
+                    href={`/blog/${post.slug}`}
+                    className="group bg-[#0b0b12] rounded-2xl border border-white/5 p-3 flex gap-4 items-center hover:border-primary-500/30 overflow-hidden hover:shadow-[0_10px_40px_rgba(59,130,246,0.08)] transition-all duration-500 hover:-translate-y-0.5 relative animate-fade-in"
+                    style={{ transitionDelay: `${(i + 1) * 100}ms` }}
+                  >
+                    <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-[#050508] shrink-0 border border-white/5 z-10">
+                      <Image src={getValidImage(post.featuredImage)} alt={post.title} fill sizes="80px" quality={70} className="object-cover transition-transform group-hover:scale-105 duration-500" />
                     </div>
-                    <h4 className="text-base md:text-xl font-black leading-snug group-hover:text-white text-gray-200 transition-colors line-clamp-2">{post.title}</h4>
-                    <div className="flex items-center gap-1 md:gap-2 mt-2 md:mt-4 text-[8px] md:text-[9px] font-bold text-gray-500 uppercase tracking-widest">
-                      <span>Read Report</span>
-                      <ArrowRight className="w-2.5 h-2.5 md:w-3 md:h-3 group-hover:translate-x-1 group-hover:text-primary-400 transition-all" />
+                    <div className="flex-1 py-1 relative z-10">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-primary-400 font-black text-[8px] uppercase tracking-[0.2em]">{post.category?.name}</span>
+                      </div>
+                      <h4 className="text-sm md:text-base font-black leading-snug group-hover:text-white text-gray-200 transition-colors line-clamp-2">{post.title}</h4>
+                      <div className="flex items-center gap-1 mt-2 text-[8px] font-bold text-gray-500 uppercase tracking-widest">
+                        <span>Read Intel Report</span>
+                        <ArrowRight className="w-2.5 h-2.5 group-hover:translate-x-1 group-hover:text-primary-400 transition-all" />
+                      </div>
                     </div>
-                  </div>
-                </Link>
-              ))}
+                  </Link>
+                ))
+              ) : latestPosts.length > 1 ? (
+                latestPosts.slice(0, 1).map((post, i) => (
+                  <Link
+                    key={post._id.toString()}
+                    href={`/blog/${post.slug}`}
+                    className="group bg-[#0b0b12] rounded-2xl border border-white/5 p-3 flex gap-4 items-center hover:border-primary-500/30 overflow-hidden hover:shadow-[0_10px_40px_rgba(59,130,246,0.08)] transition-all duration-500 hover:-translate-y-0.5 relative"
+                  >
+                    <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-[#050508] shrink-0 border border-white/5 z-10">
+                      <Image src={getValidImage(post.featuredImage)} alt={post.title} fill sizes="80px" quality={70} className="object-cover transition-transform group-hover:scale-105 duration-500" />
+                    </div>
+                    <div className="flex-1 py-1 relative z-10">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-primary-400 font-black text-[8px] uppercase tracking-[0.2em]">{post.category?.name}</span>
+                      </div>
+                      <h4 className="text-sm md:text-base font-black leading-snug group-hover:text-white text-gray-200 transition-colors line-clamp-2">{post.title}</h4>
+                      <div className="flex items-center gap-1 mt-2 text-[8px] font-bold text-gray-500 uppercase tracking-widest">
+                        <span>Read Intel Report</span>
+                        <ArrowRight className="w-2.5 h-2.5 group-hover:translate-x-1 group-hover:text-primary-400 transition-all" />
+                      </div>
+                    </div>
+                  </Link>
+                ))
+              ) : null}
 
-              {/* CTA Card */}
-              <div className="p-6 md:p-10 rounded-[1.5rem] md:rounded-[3rem] bg-premium-mesh border border-white/10 mt-6 md:mt-auto relative overflow-hidden group hover:border-white/20 transition-all">
+              {/* Archive Box */}
+              <div className="p-6 rounded-2xl bg-premium-mesh border border-white/5 mt-auto relative overflow-hidden group hover:border-white/10 transition-all">
                 <div className="relative z-10">
-                  <h4 className="text-lg md:text-xl font-black mb-1 md:mb-2 text-white">Want to see more?</h4>
-                  <p className="text-xs md:text-sm text-gray-400 mb-6 md:mb-8 font-light leading-relaxed">Join the inner circle. Access our full historical archive of deep-dive tech reports.</p>
-                  <Link href="/blog" className="flex items-center gap-2 text-white font-black text-[10px] md:text-xs uppercase tracking-[0.2em] group w-max">
-                    Browse Archive <ArrowRight className="w-3 h-3 md:w-4 md:h-4 group-hover:translate-x-1 transition-transform" />
+                  <h4 className="text-sm font-black mb-1 text-white">Looking for something specific?</h4>
+                  <p className="text-xs text-gray-400 mb-4 font-light leading-relaxed">Search through our full catalog of articles, guides, and comparison reviews.</p>
+                  <Link href="/blog" className="flex items-center gap-2 text-white font-black text-[9px] uppercase tracking-[0.2em] group w-max">
+                    Browse Article Archives <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                   </Link>
                 </div>
-                <div className="absolute -bottom-10 -right-10 w-32 h-32 md:w-40 md:h-40 bg-white/5 rounded-full blur-3xl group-hover:bg-primary-500/10 transition-colors"></div>
+                <div className="absolute -bottom-10 -right-10 w-24 h-24 bg-white/5 rounded-full blur-2xl group-hover:bg-primary-500/10 transition-colors"></div>
               </div>
             </div>
           </div>
@@ -479,8 +533,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Services Section */}
-      <ServicesSection />
+
 
       {/* Newsletter Premium - High Impact */}
       <section className="py-20 md:py-32 px-4 relative overflow-hidden">
@@ -493,10 +546,9 @@ export default async function Home() {
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full text-primary-400 text-[10px] font-black uppercase tracking-[0.2em] mb-6">
                 <Zap className="w-3.5 h-3.5" /> Intelligence Network
               </div>
-              <h2 className="text-3xl md:text-5xl font-black tracking-tighter mb-6 leading-tight">Elite Tech Intel. <br /><span className="premium-gradient">Delivered Weekly.</span></h2>
-              <p className="text-gray-400 text-sm md:text-base font-light leading-relaxed">Join 50,000+ tech enthusiasts receiving our un-hyped laboratory reports and deal alerts directly in their inbox.</p>
+              <h2 className="text-3xl md:text-5xl font-black tracking-tighter mb-6 leading-tight">Elite Tech Articles. <br /><span className="premium-gradient">Delivered Weekly.</span></h2>
+              <p className="text-gray-400 text-sm md:text-base font-light leading-relaxed">Join 50,000+ tech enthusiasts receiving our un-hyped tech reviews and deal alerts directly in their inbox.</p>
             </div>
-
             <div className="reveal-up">
               <NewsletterForm />
               <div className="mt-8 flex flex-wrap gap-6 items-center justify-center lg:justify-start">

@@ -285,6 +285,8 @@ export default async function BlogPost({ params }) {
                 />
               )}
 
+              <AdSlot className="my-8 w-full" />
+
               {/* High-Impact Comparison Matrix */}
               {relatedProducts.length > 1 && (
                 <ComparisonMatrix
@@ -336,6 +338,8 @@ export default async function BlogPost({ params }) {
                 }));
                 return renderedParts;
               })()}
+
+              <AdSlot className="my-8 w-full" />
 
               {/* Knowledge Base / FAQs */}
               <FAQ faqs={post.faqs} />

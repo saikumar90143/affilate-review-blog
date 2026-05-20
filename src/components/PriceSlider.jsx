@@ -58,7 +58,7 @@ export default function PriceSlider({ products }) {
               <span className="premium-gradient">In Your Budget</span>
             </h2>
             <p className="text-gray-400 font-light text-sm md:text-lg">
-              Drag the slider to filter our database of laboratory-tested smartphones based on your spending limit.
+              Drag the slider to filter our database of reviewed smartphones based on your spending limit.
             </p>
           </div>
 
@@ -143,7 +143,7 @@ export default function PriceSlider({ products }) {
                     <div className="mt-8 space-y-3">
                       <AffiliateButton url={prod.affiliateLink} text="Check Price" className="w-full py-3.5 text-xs font-black rounded-xl" />
                       <Link href={`/reviews/${prod.slug}`} className="w-full py-3 px-4 rounded-xl border border-white/5 hover:bg-white/5 text-[9px] font-black text-gray-500 flex items-center justify-center gap-2 uppercase tracking-[0.2em] transition-all">
-                        Deep Intel <ArrowRight className="w-3 h-3" />
+                        Read Review <ArrowRight className="w-3 h-3" />
                       </Link>
                     </div>
                   </div>
@@ -158,7 +158,7 @@ export default function PriceSlider({ products }) {
                 <div className="p-6 bg-white/5 w-fit mx-auto rounded-full mb-6">
                   <Info className="w-8 h-8 text-gray-600" />
                 </div>
-                <h3 className="text-2xl font-black mb-2">No Lab Reports in this Range</h3>
+                <h3 className="text-2xl font-black mb-2">No Products in this Range</h3>
                 <p className="text-gray-500 font-light">Try increasing your budget for flagship results.</p>
               </motion.div>
             )}
