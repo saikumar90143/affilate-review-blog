@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Search, ArrowRight, Loader2 } from "lucide-react";
+import { Search, ArrowRight, Loader2, Star } from "lucide-react";
 
 function SearchResults() {
   const searchParams = useSearchParams();

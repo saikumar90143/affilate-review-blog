@@ -23,22 +23,40 @@ export default function AdminProducts() {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalProducts, setTotalProducts] = useState(0);
   const [form, setForm] = useState(blank);
   const [isAddingCat, setIsAddingCat] = useState(false);
   const [newCatName, setNewCatName] = useState("");
   const [addingCatLoading, setAddingCatLoading] = useState(false);
 
+  // Debounce search query to prevent excessive api hits
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+      setPage(1);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [search]);
+
   const fetchAll = useCallback(async () => {
     setLoading(true);
     try {
       const [prodRes, catRes] = await Promise.all([
-        fetch("/api/products", { cache: 'no-store' }),
+        fetch(`/api/products?page=${page}&limit=10&search=${encodeURIComponent(debouncedSearch)}`, { cache: 'no-store' }),
         fetch("/api/categories?type=product", { cache: 'no-store' })
       ]);
-      if (prodRes.ok) setProducts(await prodRes.json());
+      if (prodRes.ok) {
+        const data = await prodRes.json();
+        setProducts(data.products || []);
+        setTotalPages(data.totalPages || 1);
+        setTotalProducts(data.total || 0);
+      }
       if (catRes.ok)  setCategories(await catRes.json());
     } finally { setLoading(false); }
-  }, []);
+  }, [page, debouncedSearch]);
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
 
@@ -155,7 +173,7 @@ export default function AdminProducts() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
           <h1 className="text-3xl font-bold">Products</h1>
-          <p className="text-gray-400 text-sm mt-1">{products.length} total</p>
+          <p className="text-gray-400 text-sm mt-1">{totalProducts} total</p>
         </div>
         <button
           onClick={openCreate}
@@ -189,9 +207,9 @@ export default function AdminProducts() {
           <tbody className="divide-y divide-gray-700/50">
             {loading ? (
               <tr><td colSpan={5} className="p-10 text-center text-gray-400">Loading…</td></tr>
-            ) : products.filter(p => p.title.toLowerCase().includes(search.toLowerCase())).length === 0 ? (
+            ) : products.length === 0 ? (
               <tr><td colSpan={5} className="p-10 text-center text-gray-400">{search ? `No products matching "${search}"` : "No products yet."}</td></tr>
-            ) : products.filter(p => p.title.toLowerCase().includes(search.toLowerCase())).map(prod => (
+            ) : products.map(prod => (
               <tr key={prod._id} className="hover:bg-gray-700/30 transition-colors">
                 <td className="p-4">
                   <div className="w-14 h-14 bg-white rounded-lg relative overflow-hidden p-1">
@@ -221,6 +239,29 @@ export default function AdminProducts() {
           </tbody>
         </table>
       </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between mt-6 bg-gray-900/40 p-4 rounded-xl border border-gray-700/50">
+          <button
+            onClick={() => setPage(p => Math.max(1, p - 1))}
+            disabled={page === 1}
+            className="px-4 py-2 bg-gray-800 hover:bg-gray-700 disabled:opacity-50 text-white rounded-lg text-xs font-bold transition-all"
+          >
+            Previous
+          </button>
+          <span className="text-xs text-gray-400">
+            Page <strong className="text-white font-bold">{page}</strong> of <strong className="text-white font-bold">{totalPages}</strong>
+          </span>
+          <button
+            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+            disabled={page === totalPages}
+            className="px-4 py-2 bg-gray-800 hover:bg-gray-700 disabled:opacity-50 text-white rounded-lg text-xs font-bold transition-all"
+          >
+            Next
+          </button>
+        </div>
+      )}
 
       {/* Slide-over Drawer */}
       <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)} title={isEdit ? "Refine Product" : "New Inventory"}>

@@ -28,22 +28,40 @@ export default function AdminPosts() {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalPosts, setTotalPosts] = useState(0);
   const [form, setForm] = useState(blank);
   const [isAddingCat, setIsAddingCat] = useState(false);
   const [newCatName, setNewCatName] = useState("");
   const [addingCatLoading, setAddingCatLoading] = useState(false);
 
+  // Debounce search query to prevent excessive api hits
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+      setPage(1);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [search]);
+
   const fetchAll = useCallback(async () => {
     setLoading(true);
     try {
       const [postsRes, catsRes] = await Promise.all([
-        fetch(`/api/posts?limit=100&admin=true`, { cache: 'no-store' }),
+        fetch(`/api/posts?page=${page}&limit=10&search=${encodeURIComponent(debouncedSearch)}&admin=true`, { cache: 'no-store' }),
         fetch("/api/categories?type=post", { cache: 'no-store' }),
       ]);
-      if (postsRes.ok) setPosts((await postsRes.json()).posts || []);
+      if (postsRes.ok) {
+        const data = await postsRes.json();
+        setPosts(data.posts || []);
+        setTotalPages(data.totalPages || 1);
+        setTotalPosts(data.total || 0);
+      }
       if (catsRes.ok)  setCategories(await catsRes.json());
     } finally { setLoading(false); }
-  }, []);
+  }, [page, debouncedSearch]);
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
 
@@ -193,7 +211,7 @@ export default function AdminPosts() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
           <h1 className="text-3xl font-bold">Posts</h1>
-          <p className="text-gray-400 text-sm mt-1">{posts.length} total</p>
+          <p className="text-gray-400 text-sm mt-1">{totalPosts} total</p>
         </div>
         <button
           onClick={openCreate}
@@ -229,9 +247,9 @@ export default function AdminPosts() {
           <tbody className="divide-y divide-gray-700/50">
             {loading ? (
               <tr><td colSpan={5} className="p-10 text-center text-gray-400">Loading…</td></tr>
-            ) : posts.filter(p => p.title.toLowerCase().includes(search.toLowerCase())).length === 0 ? (
+            ) : posts.length === 0 ? (
               <tr><td colSpan={5} className="p-10 text-center text-gray-400">{search ? `No posts matching "${search}"` : "No posts yet. Create your first one!"}</td></tr>
-            ) : posts.filter(p => p.title.toLowerCase().includes(search.toLowerCase())).map(post => (
+            ) : posts.map(post => (
               <tr key={post._id} className="hover:bg-gray-700/30 transition-colors">
                 <td className="p-4">
                   <div className="w-16 h-11 bg-gray-700 rounded-lg relative overflow-hidden">
@@ -280,6 +298,29 @@ export default function AdminPosts() {
           </tbody>
         </table>
       </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between mt-6 bg-gray-900/40 p-4 rounded-xl border border-gray-700/50">
+          <button
+            onClick={() => setPage(p => Math.max(1, p - 1))}
+            disabled={page === 1}
+            className="px-4 py-2 bg-gray-800 hover:bg-gray-700 disabled:opacity-50 text-white rounded-lg text-xs font-bold transition-all"
+          >
+            Previous
+          </button>
+          <span className="text-xs text-gray-400">
+            Page <strong className="text-white font-bold">{page}</strong> of <strong className="text-white font-bold">{totalPages}</strong>
+          </span>
+          <button
+            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+            disabled={page === totalPages}
+            className="px-4 py-2 bg-gray-800 hover:bg-gray-700 disabled:opacity-50 text-white rounded-lg text-xs font-bold transition-all"
+          >
+            Next
+          </button>
+        </div>
+      )}
 
       {/* Slide-over Drawer */}
       <Drawer open={drawerOpen} onClose={closeDrawer} title={isEdit ? "Refine Report" : "New Dispatch"}>

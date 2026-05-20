@@ -73,7 +73,7 @@ export default async function ProductReview({ params }) {
   }).sort({ rating: -1 }).limit(4).lean();
   const related = JSON.parse(JSON.stringify(rawRelated));
 
-  // Enriched JSON-LD product schema
+  // Enriched JSON-LD product schema with nested Review and Pros/Cons notes for Rich Snippets
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -81,6 +81,8 @@ export default async function ProductReview({ params }) {
     image: product.image,
     description: product.description || `Expert review of ${product.title}`,
     brand: { "@type": "Brand", name: "EliteReviews" },
+    sku: product._id?.toString() || slug,
+    mpn: product._id?.toString() || slug,
     aggregateRating: {
       "@type": "AggregateRating",
       ratingValue: product.rating,
@@ -88,12 +90,48 @@ export default async function ProductReview({ params }) {
       worstRating: "0",
       reviewCount: (product.helpful?.yes || 0) + (product.helpful?.no || 0) + 1,
     },
+    review: {
+      "@type": "Review",
+      "reviewBody": product.description || `Expert review and testing of ${product.title}.`,
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": product.rating,
+        "bestRating": "5",
+        "worstRating": "0"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "EliteReviews Gear Experts"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "EliteReviews"
+      },
+      "positiveNotes": product.pros && product.pros.length > 0 ? {
+        "@type": "ItemList",
+        "itemListElement": product.pros.map((pro, index) => ({
+          "@type": "ListItem",
+          "position": index + 1,
+          "name": pro
+        }))
+      } : undefined,
+      "negativeNotes": product.cons && product.cons.length > 0 ? {
+        "@type": "ItemList",
+        "itemListElement": product.cons.map((con, index) => ({
+          "@type": "ListItem",
+          "position": index + 1,
+          "name": con
+        }))
+      } : undefined
+    },
     offers: product.affiliateLink
       ? {
         "@type": "Offer",
         url: product.affiliateLink,
+        price: product.price ? product.price.toString() : "99.99",
         priceCurrency: "USD",
         availability: "https://schema.org/InStock",
+        itemCondition: "https://schema.org/NewCondition"
       }
       : undefined,
   };

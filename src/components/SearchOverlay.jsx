@@ -145,15 +145,42 @@ export default function SearchOverlay({ isOpen, onClose }) {
               </div>
             )}
             {!query && (
-              <div className="py-12 text-center">
-                <p className="text-gray-600 text-[11px] font-black uppercase tracking-[0.2em]">Enter term to search archives</p>
-                <div className="mt-8 grid grid-cols-2 gap-4 max-w-sm mx-auto">
-                   <div className="p-4 rounded-2xl border border-white/5 bg-white/2 backdrop-blur-sm text-[10px] text-gray-500 uppercase font-black tracking-widest">
-                      Press <span className="text-white">Esc</span> to close
-                   </div>
-                   <div className="p-4 rounded-2xl border border-white/5 bg-white/2 backdrop-blur-sm text-[10px] text-gray-500 uppercase font-black tracking-widest">
-                      Press <span className="text-white">Enter</span> to search
-                   </div>
+              <div className="py-4">
+                <p className="text-gray-500 text-[10px] font-black uppercase tracking-[0.2em] mb-4 px-2">Trending Searches</p>
+                <div className="flex flex-wrap gap-2 mb-8 px-2">
+                  {[
+                    { label: "S24 Ultra", url: "/reviews/samsung-s24-ultra" },
+                    { label: "iPhone 17 Pro Max", url: "/reviews/iphone-17-pro-max" },
+                    { label: "Best Phones under 15k", url: "/blog/best-phones-under-15000-india-2026" },
+                    { label: "Comparison Studio", url: "/comparison" }
+                  ].map((t) => (
+                    <Link
+                      key={t.label}
+                      href={t.url}
+                      onClick={onClose}
+                      className="px-4 py-2.5 bg-white/5 hover:bg-primary-500 hover:text-white border border-white/10 rounded-2xl text-xs font-bold text-gray-300 transition-all duration-300"
+                    >
+                      {t.label}
+                    </Link>
+                  ))}
+                </div>
+
+                <p className="text-gray-500 text-[10px] font-black uppercase tracking-[0.2em] mb-4 px-2">Quick Navigation</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl px-2">
+                  {[
+                    { title: "Mobiles Intel", desc: "Detailed smartphone ratings and reviews", link: "/blog?category=mobiles" },
+                    { title: "Tech Reviews", desc: "Sponsor-free lab benchmarks and verdicts", link: "/blog?category=tech-reviews" },
+                  ].map((cat) => (
+                    <Link
+                      key={cat.title}
+                      href={cat.link}
+                      onClick={onClose}
+                      className="p-4 rounded-2xl border border-white/5 bg-white/2 hover:bg-white/5 hover:border-white/10 text-left transition-all duration-300 block"
+                    >
+                      <div className="text-xs font-black text-white uppercase tracking-wider mb-1">{cat.title}</div>
+                      <div className="text-[10px] text-gray-500 font-light leading-snug">{cat.desc}</div>
+                    </Link>
+                  ))}
                 </div>
               </div>
             )}
