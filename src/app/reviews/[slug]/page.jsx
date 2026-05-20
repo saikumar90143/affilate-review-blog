@@ -49,6 +49,14 @@ export async function generateMetadata({ params }) {
   };
 }
 
+export async function generateStaticParams() {
+  await connectToDatabase();
+  const products = await Product.find().select('slug').lean();
+  return products.map((prod) => ({
+    slug: prod.slug,
+  }));
+}
+
 export default async function ProductReview({ params }) {
   const { slug } = await params;
 

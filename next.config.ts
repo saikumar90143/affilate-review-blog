@@ -22,7 +22,7 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 2592000,
     // Reduce default quality slightly — AVIF/WebP compensate with better compression
     dangerouslyAllowSVG: false,
-    qualities: [60, 75, 80, 82, 85],
+    qualities: [60, 70, 75, 80, 82, 85],
   },
   compiler: {
     removeConsole: process.env.NODE_ENV === "production",

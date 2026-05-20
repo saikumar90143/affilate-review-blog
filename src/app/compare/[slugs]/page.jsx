@@ -31,8 +31,35 @@ export async function generateMetadata({ params }) {
     openGraph: {
       title: `${p1.title} VS ${p2.title}`,
       description: `Ultimate head-to-head tech showdown.`,
-    }
+    },
   };
+}
+
+export async function generateStaticParams() {
+  await connectToDatabase();
+  const products = await Product.find().select("slug category").lean();
+  
+  const groupedProducts = products.reduce((acc, current) => {
+    const catId = current.category?.toString();
+    if (catId) {
+      if (!acc[catId]) acc[catId] = [];
+      acc[catId].push(current);
+    }
+    return acc;
+  }, {});
+
+  const paramsList = [];
+  for (const catId of Object.keys(groupedProducts)) {
+    const peers = groupedProducts[catId];
+    for (let i = 0; i < Math.min(peers.length, 5); i++) {
+      for (let j = i + 1; j < Math.min(peers.length, 5); j++) {
+        paramsList.push({
+          slugs: `${peers[i].slug}-vs-${peers[j].slug}`,
+        });
+      }
+    }
+  }
+  return paramsList;
 }
 
 export default async function CompareVersusPage({ params }) {

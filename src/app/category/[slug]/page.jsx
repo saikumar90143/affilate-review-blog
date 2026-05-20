@@ -19,11 +19,18 @@ export async function generateMetadata({ params }) {
   
   const title = category ? `${category.name} | EliteReviews` : `${slug.charAt(0).toUpperCase() + slug.slice(1)} | EliteReviews`;
   const description = category?.description || `Browse the best products and expert articles in the ${category?.name || slug} category on EliteReviews.`;
-  
   return {
     title,
     description,
   };
+}
+
+export async function generateStaticParams() {
+  await connectToDatabase();
+  const categories = await Category.find().select('slug').lean();
+  return categories.map((cat) => ({
+    slug: cat.slug,
+  }));
 }
 
 export default async function CategoryPage({ params }) {
@@ -36,7 +43,7 @@ export default async function CategoryPage({ params }) {
   const category = JSON.parse(JSON.stringify(rawCategory));
 
   const [rawPosts, rawProducts] = await Promise.all([
-    Post.find({ category: category._id, isPublished: true }).sort({ createdAt: -1 }).lean(),
+    Post.find({ category: category._id, isPublished: true }).select('title slug excerpt category createdAt').sort({ createdAt: -1 }).lean(),
     Product.find({ category: category._id }).sort({ isSponsored: -1, rating: -1 }).lean()
   ]);
 

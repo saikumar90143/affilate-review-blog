@@ -12,11 +12,15 @@ export const metadata = {
 
 export const dynamic = 'force-dynamic';
 
-function calculateReadingTime(content) {
-  if (!content) return "1 min read";
-  const textContent = content.replace(/<[^>]*>?/gm, ""); // strip HTML
-  const words = textContent.split(/\s+/).length;
-  return `${Math.max(1, Math.ceil(words / 200))} min read`;
+function calculateReadingTime(content, excerpt) {
+  if (content) {
+    const textContent = content.replace(/<[^>]*>?/gm, ""); // strip HTML
+    const words = textContent.split(/\s+/).length;
+    return `${Math.max(1, Math.ceil(words / 200))} min read`;
+  }
+  const excerptWords = excerpt ? excerpt.split(/\s+/).length : 50;
+  const estimatedWords = excerptWords * 10;
+  return `${Math.max(3, Math.ceil(estimatedWords / 200))} min read`;
 }
 
 export default async function BlogList({ searchParams }) {
@@ -38,7 +42,7 @@ export default async function BlogList({ searchParams }) {
   let categories = [];
 
   try {
-    const fetchPosts = Post.find(postFilter).sort({ createdAt: -1 }).populate('category').lean()
+    const fetchPosts = Post.find(postFilter).select('title slug excerpt featuredImage category createdAt').sort({ createdAt: -1 }).populate('category').lean()
       .catch(e => { console.error("[Blog] Posts fetch error:", e); return []; });
     const fetchCategories = Category.find({ for: "post" }).sort({ name: 1 }).lean()
       .catch(e => { console.error("[Blog] Categories fetch error:", e); return []; });
@@ -109,7 +113,7 @@ export default async function BlogList({ searchParams }) {
                        <span className="px-3 py-1.5 bg-white/10 backdrop-blur-md rounded-full text-[10px] font-bold uppercase tracking-widest text-primary-300 border border-white/10">
                          {featuredPost.category?.name || 'General'}
                        </span>
-                       <span className="text-gray-400 text-xs font-semibold uppercase tracking-widest">{calculateReadingTime(featuredPost.content)}</span>
+                       <span className="text-gray-400 text-xs font-semibold uppercase tracking-widest">{calculateReadingTime(featuredPost.content, featuredPost.excerpt)}</span>
                      </div>
                      <h2 className="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-6 leading-[1.1] group-hover:text-primary-400 transition-colors tracking-tighter drop-shadow-2xl">
                        {featuredPost.title}
@@ -151,7 +155,7 @@ export default async function BlogList({ searchParams }) {
                 <div className="flex items-center gap-3 mb-5 text-[10px] font-bold text-gray-500 uppercase tracking-widest">
                    <span>{new Date(post.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                    <span className="w-1 h-1 rounded-full bg-gray-700"></span>
-                   <span>{calculateReadingTime(post.content)}</span>
+                   <span>{calculateReadingTime(post.content, post.excerpt)}</span>
                 </div>
                 <h3 className="text-2xl font-black mb-4 text-white group-hover:text-primary-400 transition-colors leading-tight line-clamp-2">
                   <Link href={`/blog/${post.slug}`} className="focus:outline-none before:absolute before:inset-0">

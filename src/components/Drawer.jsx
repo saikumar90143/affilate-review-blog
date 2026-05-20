@@ -29,12 +29,18 @@ export default function Drawer({ open, onClose, title, children }) {
       />
 
       {/* Centered Modal - Glass Premium */}
-      <div className={`fixed inset-0 z-[70] flex items-center justify-center p-0 sm:p-6 lg:p-8 pointer-events-none transition-all duration-200 ${open ? "opacity-100" : "opacity-0 delay-100"}`}>
+      <div 
+        onClick={onClose}
+        className={`fixed inset-0 z-[70] flex items-center justify-center p-0 sm:p-6 lg:p-8 transition-all duration-200 ${
+          open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none delay-100"
+        }`}
+      >
         <aside
           ref={drawerRef}
+          onClick={(e) => e.stopPropagation()}
           className={`relative w-full max-w-5xl h-full sm:h-auto sm:max-h-[95vh] bg-[#0a0a0a]/95 border-y sm:border border-white/10 sm:rounded-[2rem] shadow-[0_0_80px_rgba(0,0,0,0.8)]
-            flex flex-col overflow-hidden pointer-events-auto transition-transform duration-300 ease-out
-            ${open ? "scale-100 translate-y-0" : "scale-95 translate-y-4"}`}
+            flex flex-col overflow-hidden transition-transform duration-300 ease-out
+            ${open ? "scale-100 translate-y-0 pointer-events-auto" : "scale-95 translate-y-4 pointer-events-none"}`}
           role="dialog"
           aria-modal="true"
           aria-label={title}

@@ -14,7 +14,6 @@ import dynamic from "next/dynamic";
 const AdSlot = dynamic(() => import("@/components/AdSlot"));
 const NewsletterForm = dynamic(() => import("@/components/NewsletterForm"));
 const PriceSlider = dynamic(() => import("@/components/PriceSlider"));
-const ServicesSection = dynamic(() => import("@/components/ServicesSection"));
 
 export const revalidate = 60;
 
@@ -37,7 +36,7 @@ export default async function Home() {
     console.log("[Home] Connected to database");
 
     // Use individual try-catch blocks or localized error handling to prevent one failure from hiding all posts
-    const fetchPosts = Post.find({ isPublished: { $ne: false } }).sort({ createdAt: -1 }).limit(6).populate('category').lean()
+    const fetchPosts = Post.find({ isPublished: { $ne: false } }).select('title slug excerpt summary featuredImage category createdAt').sort({ createdAt: -1 }).limit(6).populate('category').lean()
       .catch(e => { console.error("[Home] Posts fetch error:", e); return []; });
 
     const fetchProducts = Product.find({ rating: { $gte: 4.8 } }).sort({ rating: -1 }).limit(4).lean()

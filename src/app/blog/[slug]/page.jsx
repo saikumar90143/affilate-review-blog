@@ -82,6 +82,14 @@ export async function generateMetadata({ params }) {
   };
 }
 
+export async function generateStaticParams() {
+  await connectToDatabase();
+  const posts = await Post.find({ isPublished: true }).select('slug').lean();
+  return posts.map((post) => ({
+    slug: post.slug,
+  }));
+}
+
 export default async function BlogPost({ params }) {
   const { slug } = await params;
   await connectToDatabase();
@@ -114,7 +122,7 @@ export default async function BlogPost({ params }) {
     category: post.category?._id,
     _id: { $ne: post._id },
     isPublished: true
-  }).limit(3).lean();
+  }).select('title slug featuredImage category createdAt').limit(3).lean();
   const relatedContent = JSON.parse(JSON.stringify(rawRelatedContent));
 
   // Fetch some related products randomly or by category to simulate embedded products if we want
